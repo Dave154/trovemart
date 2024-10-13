@@ -5,9 +5,12 @@
 const appbarSlice = createSlice({
   name: 'appbar',
   initialState: {
+    popup:false,
     dynamicSearch:'',
     search:'',
     scroll:false,
+    scrollNext:false,
+    scrollPrev:false,
     searchSuggestions:'',
     signBar:false,
     loading: false,
@@ -25,10 +28,19 @@ const appbarSlice = createSlice({
     },
     HANDLESCROLL :(state,action)=>{
       state.scroll=action.payload
+    },
+    HANDLEPOPUP : (state,action)=>{
+      state.popup = action.payload
+    },
+    HANDLECATEGORIESSCROLLNEXT : (state,action)=>{
+      state.scrollNext=action.payload
+    },
+    HANDLECATEGORIESSCROLLPREV : (state,action)=>{
+      state.scrollPrev=action.payload
     }
   }
 });
 
 // Export actions and reducer
-export const { DYNAMICSEARCH,SEARCH,HANDLESIGN,HANDLESCROLL} = appbarSlice.actions;
+export const { DYNAMICSEARCH,SEARCH,HANDLESIGN,HANDLESCROLL,HANDLEPOPUP,HANDLECATEGORIESSCROLLNEXT,HANDLECATEGORIESSCROLLPREV} = appbarSlice.actions;
 export default appbarSlice.reducer;

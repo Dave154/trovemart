@@ -7,17 +7,30 @@ import grain from '.././assets/grain.svg'
 import laundry from '.././assets/laundry.svg'
 import foodcupboard from '.././assets/food&cupboard.svg'
 import { useDispatch, useSelector } from 'react-redux';
-import { SETCATEGORIES, SETMAINCATEGORIES,SETCURRENTCATEGORY,SETPAGINATION ,SETDEPTH,SETCURRENTPRODUCT} from '.././Slices/products.js';
+import { SETCATEGORIES, SETMAINCATEGORIES, SETCURRENTCATEGORY, SETPAGINATION, SETDEPTH, SETCURRENTPRODUCT } from '.././Slices/products.js';
+import { HANDLECATEGORIESSCROLLNEXT, HANDLECATEGORIESSCROLLPREV } from '.././Slices/appbar.js';
 import Lazy from './lazyload.jsx'
 
-
-
-
 const Categories = () => {
+    const scrollRef = useRef(null)
     const dispatch = useDispatch();
-    const { products, categories,currentCategory,currentMain,productsDisplayed,currentProduct } = useSelector((state) => state.products);
+    const { scrollPrev, scrollNext } = useSelector((state) => state.appbar)
+    const { products, categories, currentCategory, currentMain, productsDisplayed, currentProduct } = useSelector((state) => state.products);
+   
+
+    // SCROLL WITH BTN
+      const listScroll = (where) => {
+        if (scrollRef.current) {
+            const scrollAmount = where === 'left' ? -250 : 250;
+            scrollRef.current.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth',
+            });
+        }
+    }
+    // GENERATE CATEGORIES
     const nestedCategories = {}
-    products ?.forEach(item => {
+    products?.forEach(item => {
         const levels = item.category.split('/');
 
         levels.reduce((acc, level) => {
@@ -27,43 +40,56 @@ const Categories = () => {
             return acc[level];
         }, nestedCategories);
     });
-    const test =Object.entries(nestedCategories).map((item,index) =>{
-    	if(item[0] === currentMain[0]){
-    		return Object.entries(item[1]).map(itemas => itemas[0])
-    	}else{
-    		console.log('error')
-    	}
-    })
+    const test = Object.entries(nestedCategories).map((item, index) => {
+        if (item[0] === currentMain) {
+            return Object.entries(item[1]).map(itemas => itemas[0])
+        }
+    }).filter(item => item !== undefined)
+
+    // USEEFFECTS //
     useEffect(() => {
         dispatch(SETMAINCATEGORIES(Object.keys(nestedCategories)))
         dispatch(SETCURRENTCATEGORY('All'))
-    }, [products,currentMain])
-    useEffect(()=>{
-        dispatch(SETCATEGORIES(test[currentMain[1]]))
-        dispatch(SETPAGINATION(1))
-        dispatch(SETDEPTH(['Home',currentMain[0],currentCategory,currentProduct]))
-    },[products,currentMain,currentCategory,currentProduct])
+    }, [products, currentMain])
+
     useEffect(() => {
-    	dispatch(SETCURRENTPRODUCT([]))
-    }, [currentMain,currentCategory])
+        dispatch(SETCATEGORIES(test[0]))
+        dispatch(SETPAGINATION(1))
+        dispatch(SETDEPTH(['Home', currentMain, currentCategory, currentProduct]))
+    }, [products, currentMain, currentCategory, currentProduct])
 
-    const scrollRef = useRef(null)
-    const listScroll = (where) => {
-        if (scrollRef.current) {
-            const { scrollTop, scrollHeight, clientHeight } = scrollRef.current
-            const scrollAmount = where === 'left' ? -250 : 250;
+    useEffect(() => {
+        dispatch(SETCURRENTPRODUCT([]))
+    }, [currentMain, currentCategory])
 
-            scrollRef.current.scrollBy({
-                left: scrollAmount,
-                behavior: 'smooth',
-            });
+    useEffect(() => {
+        const scrolling = () => {
+            const hasScrolled = scrollRef.current.scrollLeft > 10;
+            const hasReachedEnd = scrollRef.current.scrollLeft + scrollRef.current.clientWidth >= scrollRef.current.scrollWidth;
+            console.log(scrollRef.current.scrollLeft, hasScrolled, scrollPrev, hasReachedEnd)
+            dispatch(HANDLECATEGORIESSCROLLPREV(hasScrolled))
+            dispatch(HANDLECATEGORIESSCROLLNEXT(!hasReachedEnd))
+        };
+        const checkScroll =()=> {
+        	  scrollRef.current.scrollLeft= 0
+            if (scrollRef.current.scrollWidth > scrollRef.current.clientWidth) {
+                dispatch(HANDLECATEGORIESSCROLLNEXT(true))
+            } else {
+                dispatch(HANDLECATEGORIESSCROLLNEXT(false))
+            }
         }
-    }
+        scrollRef.current.addEventListener('scroll', scrolling)
+        checkScroll()
+        return ()=> scrollRef.current.removeEventListener('scroll', scrolling)
+    }, [currentMain])
+
+//
+  
     return (
         <div className='list_container relative'> 
-			<ul className="flex overflow-auto gap-10 list py-2 " ref={scrollRef}>
+			<ul className="flex overflow-x-auto w-full  gap-10 list py-2 " ref={scrollRef}>
 			<Fab onClick={()=>listScroll('left')} aria-label="Back"   className='scroll-back' sx={{
-				display:'none',
+				display: !scrollPrev && 'none',
 				background:'white',
 				position:'absolute',
 				top:'0',
@@ -74,6 +100,7 @@ const Categories = () => {
   			<ArrowBackIosNewRounded />
 			</Fab>
 			<Fab onClick={()=>listScroll('right')}   aria-label="Forward" className='scroll-forward' sx={{
+				display: !scrollNext && 'none' ,
 				background:'white',
 				position:'absolute',
 				top:'0',
@@ -106,4 +133,4 @@ const Categories = () => {
     )
 }
 
-export default Categories 
+export default Categories

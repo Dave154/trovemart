@@ -1,24 +1,22 @@
 import { useEffect, useState } from 'react'
-import { Container, Divider, AppBar ,Skeleton ,Pagination,Typography,Breadcrumbs,Link,} from '@mui/material'
-import {Home,Whatshot,Grain} from '@mui/icons-material'
+import {useNavigate,Outlet,useParams} from 'react-router-dom'
+import { Container, Divider, AppBar, Skeleton, Pagination, Typography, Breadcrumbs, Fab, Badge } from '@mui/material'
+import { Home, ShoppingCartOutlined } from '@mui/icons-material'
 import Topnav from '../.././components/topnav.jsx'
 import Search from '../.././components/search.jsx'
 import Categories from '../.././components/categories.jsx'
 import Lazy from '../.././components/lazyload.jsx'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts, SETPRODUCTSDISPLAYED,SETPAGINATION,SETCURRENTPRODUCT } from '../.././Slices/products.js';
+import { fetchProducts, SETPRODUCTSDISPLAYED, SETPAGINATION, SETCURRENTPRODUCT } from '../.././Slices/products.js';
 const HomePage = () => {
+    const navigate = useNavigate()
+    const {category} = useParams()
     const dispatch = useDispatch();
-    const { products,productsDisplayed,paginatedProducts,pageNumber,pageList,depth} = useSelector((state) => state.products);
-    console.log(paginatedProducts)
+    const { products, productsDisplayed, paginatedProducts, pageNumber, pageList, depth,mainCategories,loading} = useSelector((state) => state.products);
+    const { popup } = useSelector((state) => state.appbar);
     useEffect(() => {
-        dispatch(fetchProducts());
-       dispatch(SETPRODUCTSDISPLAYED(['Grocery',0])) 
-       dispatch(SETPAGINATION(1))
-
+        dispatch(fetchProducts());        
     }, [products]);
-
-
 
     return <>
         <AppBar sx={{
@@ -34,87 +32,105 @@ const HomePage = () => {
     <Container>
         <Categories/>
     </Container>
-    </AppBar>
-
-    <Container maxWidth = 'xl'sx = { { my: 30 } }  >
-        <div className="mt-3 ">
-       <Breadcrumbs aria-label="breadcrumb" className='pb-4'>
-       {depth.map((item,index)=>{
-        console.log(index,depth.length)
-        return  <div key={index} className={`flex items-center  ${index !== depth.length-1 ? ' cursor-pointer hover:underline underline-offset-8 decoration-gray-200 ' : '  text-gray-400 cursor-default'} `}>
-        { item === 'Home' &&   <Home sx={{ mr: 0.5 }} fontSize="inherit" />}
-            <Typography>{item}  </Typography> 
+        <div className={`fixed inset-0 popup ${!popup && 'hidden' }`}> </div>
+    </AppBar> 
+    <Container maxWidth = 'xl'
+    sx = { { mt: 28 } } >
+        <div className='md:hidden' >
+        <Fab size="small"  aria-label="cart" sx={{
+        background:'#E51E54',
+        position:'fixed',
+        bottom: '1rem',
+        right: '1rem' ,
+        zIndex: 1000,
+                    svg:{
+                color:'#fff'
+            },
+           '&:hover': {
+          '& svg': {
+            color: '#E51E54',
+          },
+        },
+      }}>
+        <Badge color="secondary" badgeContent={100} color='success'>
+          <ShoppingCartOutlined />
+        </Badge>
+        </Fab>            
         </div>
-       })}
-{/*        <Link
-          underline="hover"
-          sx={{ display: 'flex', alignItems: 'center' }}
-          color="inherit"
-          href="/"
-        >
-         
-          MUI
-        </Link>
-        <Link
-          underline="hover"
-          sx={{ display: 'flex', alignItems: 'center' }}
-          color="inherit"
-          href="/material-ui/getting-started/installation/"
-        >
-          <Whatshot sx={{ mr: 0.5 }} fontSize="inherit" />
-          Core
-        </Link>
-        <Typography
-          sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
-        >
-          <Grain sx={{ mr: 0.5 }} fontSize="inherit" />
-          Breadcrumb
-        </Typography>*/}
-      </Breadcrumbs>
-            <ul className=' grid grid-cols-auto-fit-sm md:grid-cols-auto-fit-md gap-4'>
-            {productsDisplayed  ? 
-               paginatedProducts?.map(item=>{
-                const {id,image,name,price}=item
-                return <li className=' bg-white shadow-md  justify-center rounded overflow-hidden w-full max-w-sm' key={id} onClick={()=>dispatch(SETCURRENTPRODUCT(item))} >
-                 <div className=' w-full h-64'>
-                  <Lazy src={image} alt='image' variant="rectangular" height='100%'
-                  />
-                 </div>
-                 <div className='p-3'>
-                 <p>{name}</p>
-                 <p>₦ {price}</p>
-                 </div>      
-                </li>
-            }): Array(10).fill(0).map((item,index)=>{
-                return <li className=' bg-white shadow-md rounded overflow-hidden w-full max-w-sm' key={index}>
-                 <Skeleton variant="rectangular" sx={{
-                    width:'100%',
-                    height:'12rem'      
-                 }}
-                 />
-                 <div className='p-3 grid gap-1'>
-                  <Skeleton variant="text" width={'100%'} height={30}
-                  />
-                  <Skeleton variant="text" width={100} height={30}
-                  />
-                 </div>      
-                </li>
-            })}
-            </ul>
-                <div className='flex w-full gap-10'>
-                    <button className='bg-gray-400 rounded p-6' onClick={()=>{
-                        if(pageNumber > 1)
-                        dispatch(SETPAGINATION(pageNumber - 1))
-                    }}>Prev</button>
-                    <button className='bg-gray-400 rounded p-6' onClick={()=> {
-                        if(pageNumber < pageList){
-                        dispatch(SETPAGINATION(pageNumber + 1)) 
+         <div> 
+
+         {category ? <Outlet/> :  <section>       
+            <div className="h-full w-full">
+             { mainCategories ?
+                mainCategories.map((item,index)=>{
+                    return <div className="my-3" key={index}>
+                     <div className="bg-pink-200 flex rounded px-2 justify-end">
+                        <div className=" flex justify-between w-full ">
+                            <h2 className="text-center font-bold">{item}</h2>
+                            <p className="justify-self-end cursor-pointer" onClick={()=>{
+                                navigate(item)
+                                 // dispatch(SETPRODUCTSDISPLAYED([item,index]))
+                                 // dispatch(SETPAGINATION(1))
+                            }}>View all {Math.floor( products?.filter(product=>product.category.includes(item)).length)}+ items >>></p>    
+                        </div>
+                    </div>
+                    <ul className="flex py-4  gap-4 overflow-auto horizontal-scroll">
+                    { products?.filter((product,index)=> { 
+                            if (product.category.includes(item)) {
+                                return product
+                            }
+                     }).slice(0, 10).map((item)=>{
+                            const {name,image,price,id}=item
+                            return <li className=' bg-white shadow-md  justify-center rounded overflow-hidden w-full max-w-48 min-w-48' key={id} onClick={()=>dispatch(SETCURRENTPRODUCT(item))} >
+                             <div className=' w-full h-32'>
+                              <Lazy src={image} alt='image' variant="rectangular" height='100%'
+                              />
+                             </div>
+                             <div className='p-3'>
+                             <p>{name}</p>
+                             <p>₦ {price}</p>
+                             </div>      
+                            </li>
+                        })   
                         }
-                    }}>Next</button>
+                    </ul>
+
                 </div>
+                }): Array(5).fill(0).map(item=>{
+                    return <div>
+                        <Skeleton variant="rectangular" width={100} height={10} />
+                        
+                            <ul className="flex py-4  gap-4 overflow-auto horizontal-scroll">
+                                { Array(30).fill(0).map((item,index)=>{
+                                    return <li className=' bg-white shadow-md w-full min-w-48' key={index}>
+                                     <Skeleton variant="rectangular" sx={{
+                                        width:'100%',
+                                        height:'8rem'      
+                                     }}
+                                     />
+                                     <div className='p-3 grid gap-1'>
+                                      <Skeleton variant="text" width={'100%'} height={30}
+                                      />
+                                      <Skeleton variant="text" width={100} height={30}
+                                      />
+                                     </div>      
+                                   </li>
+                               })
+                                }
+                            </ul> 
+                        
+                    </div>
+                })
+             }
+               
+            </div>
+       </section>
+        
+        }
         </div>
          </Container>
-        </>
+         </>
 
 }
 export default HomePage
+

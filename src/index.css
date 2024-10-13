@@ -19,16 +19,8 @@ img{
 body{
 	background: rgba(100, 100, 100, .1);
 }
-.list_container:after{
-	content: '';
-	position: absolute;
-	right: 0;
-	top: 0;
-	background: linear-gradient(90deg,transparent ,white);
-	width: 15%;
-	height: 100%;
-}
-.list::-webkit-scrollbar{
+.list::-webkit-scrollbar,
+.horizontal-scroll::-webkit-scrollbar{
 	height: 0;
 }
 
