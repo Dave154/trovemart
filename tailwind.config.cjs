@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       colors: {
         accent: '#E51E54',
+        popup: 'rgba(255,255,255,.1)',
       },
       gridTemplateColumns: {
         'auto-fit-sm': 'repeat(auto-fit, minmax(150px, 1fr))',

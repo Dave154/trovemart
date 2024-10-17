@@ -2,7 +2,7 @@ import logo from '.././assets/trove.svg'
 import { Skeleton, Divider,Fab ,Badge,Accordion,AccordionSummary, AccordionDetails} from '@mui/material'
 import { Menu, AccountCircleRounded,ArrowBackIosNewRounded ,ShoppingCartOutlined,ArrowDropDown} from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux';
-import { HANDLESIGN } from '.././Slices/appbar.js';
+import { HANDLESIGN,HANDLESIGNCLOSE } from '.././Slices/appbar.js';
 import { SETCATEGORIES, SETPRODUCTSDISPLAYED, SETPAGINATION } from '.././Slices/products.js';
 import { HANDLESCROLL } from '.././Slices/appbar.js';
 import { useState,useEffect} from 'react'
@@ -21,12 +21,18 @@ const list = [{
 const Topnav = () => {
   const {category} = useParams()
   const navigate= useNavigate()
-    const dispatch = useDispatch() 
+    const dispatch = useDispatch()
+     const { searchopen} = useSelector((state) => state.search);
+     const { amount} = useSelector((state) => state.cart); 
+    const { signBar,scroll } = useSelector((state) => state.appbar);
+    const { mainCategories} = useSelector((state) => state.products);
+   
   let lastScrollTop = 0;  
   useEffect(() => {
+
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (scrollTop > lastScrollTop) {
+      if (scrollTop > lastScrollTop && !searchopen){
         dispatch(HANDLESCROLL(true))
       } else {
        dispatch(HANDLESCROLL(false)) 
@@ -37,17 +43,13 @@ const Topnav = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [searchopen]);
 
-
-
-    const { signBar,scroll } = useSelector((state) => state.appbar);
-    const { mainCategories} = useSelector((state) => state.products);
     return <header>
     <nav className='flex justify-between  py-3 items-start cursor-pointer'>
         <div className='flex items-center gap-3' onClick={()=>{
           // dispatch(SETPRODUCTSDISPLAYED([]))
-          navigate('/')
+          navigate('/store')
         } }>
           <span className="logo w-10">
             <img src={logo} alt="logo"/>
@@ -59,7 +61,7 @@ const Topnav = () => {
           {
             mainCategories ? mainCategories.map((item,index)=>{
              return  <h2 className ={`text-xs p-2 px-4 rounded-2xl cursor-pointer ${item === category && 'bg-gray-200' }  hover:bg-gray-100 `} key={index} onClick={()=>{
-              navigate(item)
+              navigate(`/store/${item}`)
             } }>
                {item}
                </h2> 
@@ -76,21 +78,27 @@ const Topnav = () => {
           
         </div>
         <div className='relative flex items-center gap-8'>
-        <div className='hidden md:block'>
-         <Badge color="secondary"  badgeContent={100} sx={{
+        <div className='hidden md:flex gap-2 txt-accent items-center'>
+         <Badge color="secondary"  badgeContent={amount} sx={{
             span:{
               background:'#E51E54'
-            }  
-         }}>
+            },
+            '& svg':{
+              color: '#E51E54'
+            },
+         }}
+         onClick={()=>navigate('/cart')}
+         >
           <ShoppingCartOutlined />
         </Badge>
+          <p className='text-accent'>Cart</p>
         </div>
         <div>
           <div className='flex gap-6 border-2 border-gray-200 rounded-3xl p-1 px-2 cursor-pointer hover:shadow-md' onClick={()=>dispatch(HANDLESIGN())} >
             <i><Menu/></i>
             <i><AccountCircleRounded/></i>
           </div>
-          <Close condition={signBar} Func={HANDLESIGN}>
+          <Close condition={signBar} Func={HANDLESIGNCLOSE}>
                      {
             signBar &&  <div className='shadow-md  absolute z-20 -bottom-100 right-0 rounded-md mt-2 bg-white'>
             <ul className=' w-80 md:w-40'>
@@ -121,7 +129,7 @@ const Topnav = () => {
                  {
                 mainCategories?.map((item,index)=>{
                   return  <h2 className ={`text-sm p-3 px-4 rounded-2xl cursor-pointer ${item === category && 'bg-gray-200' }  hover:bg-gray-100 `} key={index} onClick={()=>{
-                       navigate(item)
+                       navigate(`/store/${item}`)
                        dispatch(HANDLESIGN())
             } }>
                {item}

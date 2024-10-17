@@ -51,10 +51,17 @@ const productsSlice = createSlice({
               return item.category.includes(action.payload) 
           }else{
             return item
-          }
-
-            
+            } 
           })
+        },
+        SETPRODUCTSDISPLAYEDONSEARCH: (state,action)=>{
+          state.currentMain= 'AllProducts'
+          state.currentCategory= action.payload
+          state.currentProducts = state.products.filter(item=>{
+            if (item.name.toLowerCase().includes(action.payload.toLowerCase()) || item.category.toLowerCase().includes(action.payload.toLowerCase())) {
+              return item
+          }
+        })
         },
         SETCURRENTCATEGORY: (state,action)=>{
           state.currentCategory= action.payload
@@ -67,11 +74,10 @@ const productsSlice = createSlice({
           })  
         },
          SETPAGINATION: (state,action)=> {
-
           state.pageNumber=action.payload
-          state.pageList =(state.productsDisplayed?.length / 80)
+          state.pageList = state.currentProducts?.length / 50 > 1 ? parseFloat((state.currentProducts?.length / 50).toFixed(0)) : 1 
           state.paginatedProducts=state.currentProducts?.filter((item,index)=>{
-                  if(index <= ((state.pageNumber *80)-1) && index >= (state.pageNumber-1 )*80 ){
+                  if(index <= ((state.pageNumber *50)-1) && index >= (state.pageNumber-1 )*50 ){
                     return item
                   }
                 });
@@ -86,7 +92,7 @@ const productsSlice = createSlice({
         },
         SETCURRENTPRODUCT: (state,action)=>{
           state.currentProduct = action.payload.name
-        }                                                                 
+        },                                                              
     },
     extraReducers: (builder) => {
         builder
@@ -113,6 +119,7 @@ SETPRODUCTSDISPLAYED,
 SETPAGINATION,
 SETCURRENTCATEGORY,
 SETDEPTH,
-SETCURRENTPRODUCT
+SETCURRENTPRODUCT,
+SETPRODUCTSDISPLAYEDONSEARCH
 } = productsSlice.actions;
 export default productsSlice.reducer;

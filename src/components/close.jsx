@@ -18,8 +18,8 @@ import { HANDLEPOPUP } from '.././Slices/appbar.js';
  		};
  	}, [condition])
 
- 	return <>
+ 	return < div className='relative z-20'>
  		{children}
- 	</>
+ 	</div>
  }
  export default Close
