@@ -1,7 +1,7 @@
   import {createSlice} from '@reduxjs/toolkit'
 
 
-  const searchhistory=JSON.parse(localStorage.getItem('searchOptions'))
+  const searchhistory= localStorage.getItem('searchOptions')?  JSON.parse(localStorage.getItem('searchOptions')) :[]
   const searchSlice= createSlice({
     name:'search',
     initialState: {

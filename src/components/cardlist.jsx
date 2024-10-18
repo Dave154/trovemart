@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
  const CardList = ({list}) => {
  	 	const dispatch = useDispatch();
- 	 	 const { pageNumber, pageList} = useSelector((state) => state.products);
+ 	 	 const {products, pageNumber, pageList} = useSelector((state) => state.products);
  	return (
  		 <section>
              <ul className=' grid grid-cols-auto-fit-sm md:grid-cols-auto-fit-md gap-4'>
-            { list ? 
-               list.map(item=>{
+            { products?.length > 0 ? 
+               list?.map(item=>{
                 // const {id,image,name,price}=item
                 return <Card
                 key={item.id}

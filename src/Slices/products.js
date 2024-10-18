@@ -1,19 +1,21 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import data from '.././components/products.json'
+// import data from '.././components/products.json'
 import axios from 'axios';
 export const fetchProducts = createAsyncThunk(
     'products/fetchProducts',
-    async () => {
-       const response = await new Promise((resolve,reject)=>{
-        if(data){
-         resolve(data)
-        }
-        else {
-          reject(null)
-        }
-       })
-        // const response = await axios.get(url)
-         return response;
+    async (url) => {
+       // const response = await new Promise((resolve,reject)=>{
+       //  if(data){
+       //    setTimeout(()=>{
+       //   resolve(data)
+       // },5000)
+       //  }
+       //  else {
+       //    reject(null)
+       //  }
+       // })
+        const response = await axios.get(url)
+         return response.data.data;
     }
 );
 
@@ -21,7 +23,7 @@ export const fetchProducts = createAsyncThunk(
 const productsSlice = createSlice({
     name: 'products',
     initialState: {
-        products: data,
+        products: [],
         productsDisplayed:null,
         currentProducts:[],
         currentProduct:null,
@@ -47,7 +49,7 @@ const productsSlice = createSlice({
         SETPRODUCTSDISPLAYED: (state,action)=>{
           state.currentMain= action.payload
           state.productsDisplayed = state.products.filter(item=>{
-            if ( action.payload) {
+            if (action.payload) {
               return item.category.includes(action.payload) 
           }else{
             return item
@@ -56,11 +58,16 @@ const productsSlice = createSlice({
         },
         SETPRODUCTSDISPLAYEDONSEARCH: (state,action)=>{
           state.currentMain= 'AllProducts'
-          state.currentCategory= action.payload
+          state.currentCategory= action.payload ? action.payload : null
           state.currentProducts = state.products.filter(item=>{
-            if (item.name.toLowerCase().includes(action.payload.toLowerCase()) || item.category.toLowerCase().includes(action.payload.toLowerCase())) {
+            if (action.payload) {
+              if (item.name.toLowerCase().includes(action.payload.toLowerCase()) || item.category.toLowerCase().includes(action.payload.toLowerCase())) {
+                return item
+               }             
+            }else{
               return item
-          }
+            }
+
         })
         },
         SETCURRENTCATEGORY: (state,action)=>{

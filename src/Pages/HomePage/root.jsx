@@ -8,6 +8,7 @@ import Categories from '../.././components/categories.jsx'
 import Lazy from '../.././components/lazyload.jsx'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts, SETPRODUCTSDISPLAYED, SETPAGINATION, SETCURRENTPRODUCT } from '../.././Slices/products.js';
+import Navigation from '../.././components/appbar.jsx'
 const Root = () => {
     const navigate = useNavigate()
     const {category} = useParams()
@@ -25,9 +26,10 @@ const Root = () => {
     }, [query]);
 
     return <>
-           <section>       
+           <Navigation mt={20}/>    
+           <section>   
             <div className="h-full w-full">
-             { mainCategories ?
+             { mainCategories?.length > 0 ?
                 mainCategories.map((item,index)=>{
                     return <div className="my-3" key={item}>
                      <div className="bg-pink-200 flex rounded px-2 justify-end">
@@ -64,7 +66,7 @@ const Root = () => {
                 </div>
                 }): Array(5).fill(0).map(item=>{
                     return <div>
-                        <Skeleton variant="rectangular" width={100} height={10} />
+                        <Skeleton variant="rectangular" width={'100%'} height={30} />
                         
                             <ul className="flex py-4  gap-4 overflow-auto horizontal-scroll">
                                 { Array(30).fill(0).map((item,index)=>{

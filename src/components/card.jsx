@@ -32,8 +32,7 @@ import AmountToggler from './amountToggler.jsx';
                       <Button variant='contained' sx={{
                         background:'#E51E54'
                      }} 
-                        onClick={()=>dispatch(ADDTOCART(item) )}
-                     >
+                        onClick={()=>dispatch(ADDTOCART(item))}>
                          Add to Cart
                      </Button>
                  }

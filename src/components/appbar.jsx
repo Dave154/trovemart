@@ -6,17 +6,16 @@ import Topnav from './topnav.jsx'
 import Search from './search.jsx'
 import Categories from './categories.jsx'
 import { useDispatch, useSelector } from 'react-redux';
-import { SETMAINCATEGORIES, SETCATEGORIES, SETPAGINATION, SETDEPTH } from '.././Slices/products.js';
+import { fetchProducts,SETMAINCATEGORIES, SETCATEGORIES, SETPAGINATION, SETDEPTH } from '.././Slices/products.js';
 import { GETTOTAL,REMOVEALERT,ITEMCHANGEALERT } from '.././Slices/cart.js';
 
-const Navigation = ({ showCat }) => {
+const Navigation = ({ showCat,mt}) => {
 	const navigate = useNavigate()
     const dispatch = useDispatch();
     const { popup } = useSelector((state) => state.appbar);
     const { amount, cartList, alert} = useSelector((state) => state.cart);
     const { scrollPrev, scrollNext } = useSelector((state) => state.appbar)
     const { products, categories, currentCategory, currentMain, productsDisplayed, currentProduct } = useSelector((state) => state.products);
-
     const nestedCategories = {};
     products?.forEach(item => {
         const levels = item.category.split('/');
@@ -35,13 +34,18 @@ const Navigation = ({ showCat }) => {
     }).filter(item => item !== undefined)
 
 // USEEFFECTS
+
+    useEffect(() => {
+        dispatch(fetchProducts('https://products-orcin.vercel.app/product?page=1&limit=3761'));         
+    }, []);
+
     useEffect(()=>{
      dispatch(GETTOTAL())
      localStorage.setItem('cartList', JSON.stringify(cartList))
       const remove = setTimeout(()=>{
             dispatch(REMOVEALERT())
 
-        },2000) 
+        },3000) 
 
             return ()=> clearTimeout(remove)
     },[cartList])
@@ -68,7 +72,7 @@ const Navigation = ({ showCat }) => {
         color:'black',
         boxShadow:'4px 2px 5px rgba(200,200,200,.1)'
     }} >
-            <Collapse in={alert? true: false} sx={{
+            <Collapse in={alert ? true: false} sx={{
                 position:'fixed',
                 width:'100%',
             zIndex:'1200'
@@ -81,6 +85,7 @@ const Navigation = ({ showCat }) => {
               color="success"
               size="small"
               onClick={() => {
+                dispatch(REMOVEALERT())
               }}
             >
               <Close fontSize="inherit" />
@@ -108,7 +113,7 @@ const Navigation = ({ showCat }) => {
        <div className={`fixed inset-0 popup z-10 bg-popup ${!popup && 'hidden' }`}> </div>
     </AppBar> 
     <Container maxWidth = 'xl'
-    sx = { { mt: 18} } >
+    sx = { { mt: mt} } >
         <div className='md:hidden' >
         <Fab size="small"  aria-label="cart" onClick={()=>{
         	 navigate('/cart')
@@ -130,6 +135,7 @@ const Navigation = ({ showCat }) => {
         <Badge badgeContent={amount} color='success'>
           <ShoppingCartOutlined />
         </Badge>
+
         </Fab>            
         </div>
          </Container>

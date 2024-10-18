@@ -1,6 +1,6 @@
 import logo from '.././assets/trove.svg'
 import { Skeleton, Divider,Fab ,Badge,Accordion,AccordionSummary, AccordionDetails} from '@mui/material'
-import { Menu, AccountCircleRounded,ArrowBackIosNewRounded ,ShoppingCartOutlined,ArrowDropDown} from '@mui/icons-material'
+import { Menu, AccountCircleRounded,ArrowBackIosNewRounded ,ShoppingCartOutlined, ShoppingBagOutlined,ArrowDropDown} from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux';
 import { HANDLESIGN,HANDLESIGNCLOSE } from '.././Slices/appbar.js';
 import { SETCATEGORIES, SETPRODUCTSDISPLAYED, SETPAGINATION } from '.././Slices/products.js';
@@ -23,7 +23,7 @@ const Topnav = () => {
   const navigate= useNavigate()
     const dispatch = useDispatch()
      const { searchopen} = useSelector((state) => state.search);
-     const { amount} = useSelector((state) => state.cart); 
+     const { amount,orders} = useSelector((state) => state.cart); 
     const { signBar,scroll } = useSelector((state) => state.appbar);
     const { mainCategories} = useSelector((state) => state.products);
    
@@ -59,7 +59,7 @@ const Topnav = () => {
         <div className={`grid place-items-center gap-6 ${scroll && 'hidden'}`}>
           <div className=' gap-2 hidden md:flex '>
           {
-            mainCategories ? mainCategories.map((item,index)=>{
+            mainCategories?.length >0 ? mainCategories.map((item,index)=>{
              return  <h2 className ={`text-xs p-2 px-4 rounded-2xl cursor-pointer ${item === category && 'bg-gray-200' }  hover:bg-gray-100 `} key={index} onClick={()=>{
               navigate(`/store/${item}`)
             } }>
@@ -78,20 +78,47 @@ const Topnav = () => {
           
         </div>
         <div className='relative flex items-center gap-8'>
-        <div className='hidden md:flex gap-2 txt-accent items-center'>
-         <Badge color="secondary"  badgeContent={amount} sx={{
-            span:{
-              background:'#E51E54'
-            },
-            '& svg':{
-              color: '#E51E54'
-            },
-         }}
-         onClick={()=>navigate('/cart')}
-         >
-          <ShoppingCartOutlined />
-        </Badge>
-          <p className='text-accent'>Cart</p>
+        <div className='flex items-center gap-4'>
+              <div className='hidden md:block'>
+                 <Badge color="secondary" className='hidden' badgeContent={amount} sx={{
+                    span:{
+                      background:'#E51E54'
+                    },
+                    '& svg':{
+                      color: ''
+                    },
+                    '&:hover':{
+                      '& p': {
+                        opacity:1
+                      }
+                    }
+                 }}
+                 onClick={()=>navigate('/cart')}
+                 >
+                  <ShoppingCartOutlined />
+                  <p className='text-accent absolute -bottom-full right-0 opacity-0'>Cart</p>
+                </Badge>
+              </div>
+            <div>
+                <Badge color="secondary"  badgeContent={orders.length} sx={{
+                    span:{
+                      background:'#E51E54'
+                    },
+                    '& svg':{
+                      color: ''
+                    },
+                    '&:hover':{
+                      '& p': {
+                        opacity:1
+                      }
+                    }
+                 }}
+                 onClick={()=>navigate('/cart/orders')}
+                 >
+                  <ShoppingBagOutlined />
+                  <p className='text-accent absolute -bottom-full right-0 opacity-0'>Orders</p>
+                </Badge>
+            </div>
         </div>
         <div>
           <div className='flex gap-6 border-2 border-gray-200 rounded-3xl p-1 px-2 cursor-pointer hover:shadow-md' onClick={()=>dispatch(HANDLESIGN())} >
@@ -127,14 +154,19 @@ const Topnav = () => {
               </AccordionSummary>
               <AccordionDetails>
                  {
-                mainCategories?.map((item,index)=>{
+                mainCategories?.length > 0 ? mainCategories.map((item,index)=>{
                   return  <h2 className ={`text-sm p-3 px-4 rounded-2xl cursor-pointer ${item === category && 'bg-gray-200' }  hover:bg-gray-100 `} key={index} onClick={()=>{
                        navigate(`/store/${item}`)
                        dispatch(HANDLESIGN())
             } }>
                {item}
                </h2>
-                })
+                }) : <div>
+                  <Skeleton variant="text" width={'100%'} />
+                   <Skeleton variant="text" width={'100%'} />
+                    <Skeleton variant="text" width={'100%'} />
+                     <Skeleton variant="text" width={'100%'} />
+                </div>
                }
               </AccordionDetails>
             </Accordion>

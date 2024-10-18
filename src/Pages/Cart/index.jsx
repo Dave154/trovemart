@@ -15,13 +15,12 @@ const Index = () => {
     const { cartList , amount, subtotal,recentlyViewed} = useSelector((state) => state.cart)
     return (
         <div>
-		<Navigation/> 
+		<Navigation mt={20}/> 
 		<Container maxWidth = 'xl'>
 			<div className="grid gap-1 ">
 			<i className='w-8 h-8 bg-red-50 hover:bg-red-100 rounded-full grid place-content-center' onClick={()=>{
 				navigate(-1)
-			} }
-			><ArrowBack sx={{
+			} }><ArrowBack sx={{
 				color:'#E51E54',
 				fontSize:'1.2rem',
 				cursor:'pointer'
@@ -88,7 +87,7 @@ const Index = () => {
 						}} >
 							<Phone/>
 						</Button>
-						<Button variant="contained" sx={{
+						<Button variant="contained" onClick={()=>navigate('checkout')} sx={{
 							width:'100%',
 							minWidth:'15rem',
 							background: '#E51E54',

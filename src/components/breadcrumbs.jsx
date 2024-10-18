@@ -3,8 +3,9 @@ import {useNavigate,Outlet,useParams} from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { Home } from '@mui/icons-material'
 import {  Skeleton , Typography, Breadcrumbs } from '@mui/material'
-
+import {SETCURRENTCATEGORY} from '.././Slices/products.js'
 const Index = () => {
+    const  dispatch=useDispatch()
 	  const navigate = useNavigate()
        const {depth} = useSelector((state) => state.products);
 	return (
@@ -14,11 +15,15 @@ const Index = () => {
         depth.map((item,index)=>{
         return  <div key={index} className={`flex items-center  ${index !== depth.length-1 ? ' cursor-pointer hover:underline underline-offset-8 decoration-gray-200 ' : '  text-gray-400 cursor-default'} `}
         onClick={()=>{
-        	console.log(index)
             if (index === 0) {
                   navigate('/store')
              }else if(index === 1){
-               navigate(`/store/${item}`)
+                if(item=== 'AllProducts'){
+                navigate(`/store/allproducts`)
+                }else{
+                dispatch(SETCURRENTCATEGORY('All'))
+               navigate(`/store/${item}`)    
+                }
              }
         }}
         >

@@ -40,14 +40,13 @@
            })
     		 dispatch(SEARCHARRAY([...new Set(allcat)]))
      }, [products])
-
      const handleSubmit = (value) => {
          if (value.length > 0) {
              const searchParam = checkInput(value)
              dispatch(SEARCH(searchParam))
              dispatch(HANDLESEARCHCLOSE())
              dispatch(DYNAMICSEARCH())
-             navigate(`/store/allproducts/${searchParam}`)
+             navigate(`/store/allproducts/${encodeURIComponent(searchParam)}`)
          }
      }
      return <article className=''>
@@ -56,7 +55,7 @@
  	e.preventDefault()
  	handleSubmit(e.target[0].value)
  }}>
-     <input type="search" className=' w-full p-2' id='search' placeholder={placeholder} value={dynamicquery} onFocus={()=>	dispatch(HANDLESEARCHOPEN())} onChange={(e)=>{
+     <input type="search" className=' w-full p-2'  placeholder={placeholder} value={dynamicquery} onFocus={()=>	dispatch(HANDLESEARCHOPEN())} onChange={(e)=>{
      	dispatch(DYNAMICSEARCH({ list:products, params:e.target.value}))
      	dispatch(HANDLESEARCHOPEN())
      } }/>
@@ -82,7 +81,7 @@
 			<Close Func={()=>HANDLESEARCHCLOSE()} condition={searchopen}>	
  				<div className={` ${!searchopen && 'hidden'} absolute w-full autocomplete -bottom-100 px-3 left-1/2 -translate-x-1/2  z-10 md:w-1/2 rounded bg-white shadow-xl `}>
      		 {
-     		 	dynamicquery.length > 0 ? 
+     		 	dynamicquery .length > 0 ? 
 				 <div className="">
      		 	<ul className="grid gap-3"
      		 	>
