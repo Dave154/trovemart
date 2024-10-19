@@ -1,26 +1,8 @@
  import {createSlice,createAsyncThunk} from '@reduxjs/toolkit'
 
-
- export const placeOrder= createAsyncThunk(
- 	'cart/placeOrder',
- 	async()=>{
- 		 const response = await new Promise((resolve,reject)=>{
-        if(true){
-          setTimeout(()=>{
-         resolve('heu')
-       },5000)
-        }
-        else {
-          reject(null)
-        }
-       })
-       return response
- 	}
-  )
-
  const localCart = localStorage.getItem('cartList') ? JSON.parse(localStorage.getItem('cartList')): [];
  const localrecent=localStorage.getItem('recentlyViewed') ? JSON.parse(localStorage.getItem('recentlyViewed')): [];
-
+ const localorders=localStorage.getItem('orders') ? JSON.parse(localStorage.getItem('orders')): [];
 
  const cartSlice = createSlice({
  	name:'cart',
@@ -29,7 +11,7 @@
 	loading: false,
 	cartList: localCart,
 	amount: 0,
-	orders:[],
+	orders:localorders,
 	orderTab:'All',
 	subtotal: 0,
 	total:0,
@@ -37,6 +19,11 @@
 	recentlyViewed:localrecent,
 	alert:'',
 	drop: false,
+	modal:false,
+	qr:'',
+	orderModal:false,
+	orderNo:0,
+	limit:20000
  	},
  	reducers:{
  		TOGGLEAMOUNT:(state,action)=>{
@@ -59,6 +46,7 @@
 		}).filter(item=>item.amount !==0)
  				state.cartList= tempCart
  		},
+
  		CLEARCART: (state)=>{
  			state.cartList=[]
  		},
@@ -70,7 +58,7 @@
  			const cartItem = {...action.payload,amount: 1}
  			state.cartList=[...state.cartList,cartItem]
  			state.alert='success'
- 			state.recentlyViewed= [...new Set([action.payload,...state.recentlyViewed])].slice(0,20)
+ 			state.recentlyViewed= [action.payload,...state.recentlyViewed].filter((item, index, self) =>index === self.findIndex((obj) => obj.id === item.id)).slice(0,20)
  			localStorage.setItem('recentlyViewed', JSON.stringify(state.recentlyViewed))
  		},
  		ITEMCHANGEALERT:(state,action)=>{
@@ -95,11 +83,11 @@
 			return parseFloat(num.toFixed(2))
 		}
 		const extra = state.packaging.bool ? state.packaging.value: null
-		subtotal= parseFloat(subtotal.toFixed(2))
+		subtotal=checkNum(subtotal)
 		total = checkNum(subtotal + extra)
 		state.amount = amount
-		state.subtotal = subtotal
-		state.total=total
+		state.subtotal = subtotal.toLocaleString()
+		state.total=total.toLocaleString()
  		},
 
  		// CART 
@@ -114,27 +102,35 @@
  		},
  		PACKAGING: (state,action)=>{
  			state.packaging= {...state.packaging,bool:action.payload}
+ 		},
+ 		OPENBACKDROP: (state)=>{
+ 			state.loading =true
+ 		},
+ 		HANDLEMODAL:(state)=>{
+ 			state.modal=false
+ 			state.cartList=[]
+ 		},
+ 		PLACEORDER: (state,action)=>{
+ 			state.qr = action.payload
+ 			state.modal=true
+ 			state.loading=false
+ 		},
+ 		ORDERS:(state,action)=>{
+ 			state.orders= [action.payload, ...state.orders]
+ 			localStorage.setItem('orders', JSON.stringify(state.orders))
+ 		},
+ 		OPENORDERMODAL: (state,action)=>{
+ 			state.orderModal= state.orders.find(item=> item.orderId === action.payload)
+ 		},
+ 		CLOSEORDERMODAL: (state)=>{
+ 			state.orderModal=false
  		}
  	},
-    extraReducers: (builder) => {
-        builder
-            .addCase(placeOrder.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(placeOrder.fulfilled, (state, action) => {
-                state.products = action.payload;
-                state.loading = false;
-            })
-            .addCase(placeOrder.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message;
-            });
-    },
  });
 
 
  export const {
+ 	PLACEORDER,
  TOGGLEAMOUNT,
  CLEARCART,
  REMOVEITEM,
@@ -145,7 +141,12 @@
  ORDERTAB,
  ADDTOORDERS,
  TOGGLEDROP,
- PACKAGING
+ PACKAGING,
+ OPENBACKDROP,
+ HANDLEMODAL,
+ ORDERS,
+ OPENORDERMODAL,
+CLOSEORDERMODAL,
 }=cartSlice.actions;
 
  export default cartSlice.reducer;

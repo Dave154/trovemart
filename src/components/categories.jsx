@@ -59,7 +59,6 @@ const Categories = () => {
         const scrolling = () => {
             const hasScrolled = scrollRef.current.scrollLeft > 10;
             const hasReachedEnd = scrollRef.current.scrollLeft + scrollRef.current.clientWidth >= scrollRef.current.scrollWidth;
-            console.log(scrollRef.current.scrollLeft, hasScrolled, scrollPrev, hasReachedEnd)
             dispatch(HANDLECATEGORIESSCROLLPREV(hasScrolled))
             dispatch(HANDLECATEGORIESSCROLLNEXT(!hasReachedEnd))
         };

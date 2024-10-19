@@ -40,7 +40,6 @@ import { useDispatch, useSelector } from 'react-redux';
                 <div className='flex w-full gap-10 justify-center my-10'>
             	  <Pagination count={pageList} page={pageNumber} onChange={(e,value)=>{
                     if(value){
-                        console.log(value)
                     dispatch(SETPAGINATION(value))
                     }else{
                          dispatch(SETPAGINATION(1))

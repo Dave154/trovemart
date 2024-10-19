@@ -10,11 +10,11 @@ import Close from './close.jsx'
 import {useNavigate,useParams} from 'react-router-dom'
 const list = [{
         txt: 'Sign Up',
-        route: 'signup'
+        route: '/signup'
     },
     {
         txt: 'Log In',
-        route: 'login'
+        route: '/login'
     },
 
 ]
@@ -96,11 +96,11 @@ const Topnav = () => {
                  onClick={()=>navigate('/cart')}
                  >
                   <ShoppingCartOutlined />
-                  <p className='text-accent absolute -bottom-full right-0 opacity-0'>Cart</p>
+                  <p className='text-accent absolute -bottom-full right-0 opacity-0 pb-2 transition-all'>Cart</p>
                 </Badge>
               </div>
             <div>
-                <Badge color="secondary"  badgeContent={orders.length} sx={{
+                <Badge color="secondary"  badgeContent={orders.filter(item=>item.status === 'pending').length} sx={{
                     span:{
                       background:'#E51E54'
                     },
@@ -116,12 +116,14 @@ const Topnav = () => {
                  onClick={()=>navigate('/cart/orders')}
                  >
                   <ShoppingBagOutlined />
-                  <p className='text-accent absolute -bottom-full right-0 opacity-0'>Orders</p>
+                  <p className='text-accent absolute -bottom-full  pb-2 right-0 opacity-0 transition-all'>Orders</p>
                 </Badge>
             </div>
         </div>
         <div>
-          <div className='flex gap-6 border-2 border-gray-200 rounded-3xl p-1 px-2 cursor-pointer hover:shadow-md' onClick={()=>dispatch(HANDLESIGN())} >
+          <div className='flex gap-6 border-2 border-gray-200 rounded-3xl p-1 px-2 cursor-pointer hover:shadow-md' onClick={()=>{
+           dispatch(HANDLESIGN())
+         }} >
             <i><Menu/></i>
             <i><AccountCircleRounded/></i>
           </div>
@@ -133,7 +135,10 @@ const Topnav = () => {
             {
               list.map((item,index)=>{
                 const {txt,route}=item
-                return <li key={index} className='p-2 hover:bg-gray-200' onClick={()=>dispatch(HANDLESIGN())}>
+                return <li key={index} className='p-2 hover:bg-gray-200' onClick={()=>{
+                  navigate(route)
+                  dispatch(HANDLESIGN())
+                }}>
                   <p>{txt}</p>
                 </li>
               })

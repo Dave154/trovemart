@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
-import {useNavigate,Outlet,useParams} from 'react-router-dom'
-import { Container, Divider, AppBar, Skeleton, Pagination, Typography, Breadcrumbs, Fab, Badge } from '@mui/material'
-import { Home, ShoppingCartOutlined } from '@mui/icons-material'
+import { useEffect } from 'react'
+import {useNavigate,useParams} from 'react-router-dom'
+import { Skeleton, Breadcrumbs,Button } from '@mui/material'
+import { Home, ShoppingCartOutlined,KeyboardDoubleArrowRight } from '@mui/icons-material'
 import Topnav from '../.././components/topnav.jsx'
 import Search from '../.././components/search.jsx'
 import Categories from '../.././components/categories.jsx'
 import Lazy from '../.././components/lazyload.jsx'
+import Card from '../.././components/card.jsx'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts, SETPRODUCTSDISPLAYED, SETPAGINATION, SETCURRENTPRODUCT } from '../.././Slices/products.js';
 import Navigation from '../.././components/appbar.jsx'
@@ -25,40 +26,35 @@ const Root = () => {
         dispatch(SETPAGINATION(1))
     }, [query]);
 
+    const round = (num)=>{
+        if(num.toString().length > 2){
+        return Math.floor(num/100)*100
+    }else{
+        return num
+      }
+    }
     return <>
            <Navigation mt={20}/>    
            <section>   
             <div className="h-full w-full">
              { mainCategories?.length > 0 ?
                 mainCategories.map((item,index)=>{
-                    return <div className="my-3" key={item}>
-                     <div className="bg-pink-200 flex rounded px-2 justify-end">
-                        <div className=" flex justify-between w-full ">
+                    return <div className="my-0" key={item}>
+                     <div className="bg-red-200 flex rounded-xl p-2 justify-end cursor-pointer">
+                        <div className=" flex justify-between w-full " onClick={()=>{
+                                navigate(item)  
+                            }}>
                             <h2 className="text-center font-bold">{item}</h2>
-                            <p className="justify-self-end cursor-pointer" onClick={()=>{
-                                navigate(item)
-                                 // dispatch(SETPRODUCTSDISPLAYED([item,index]))
-                                 // dispatch(SETPAGINATION(1))
-                            }}>View all {Math.floor( products?.filter(product=>product.category.includes(item)).length)}+ items </p>    
+                            <p className="justify-self-end cursor-pointer">View all {round(products?.filter(product=>product.category.includes(item)).length)}+ items <KeyboardDoubleArrowRight/> </p>    
                         </div>
                     </div>
-                    <ul className="flex py-4  gap-4 overflow-auto horizontal-scroll">
+                    <ul className="flex py-4 pl-1 gap-4 overflow-auto horizontal-scroll">
                     { products?.filter((product,index)=> { 
                             if (product.category.includes(item)) {
                                 return product
                             }
                      }).slice(0, 10).map((item)=>{
-                            const {name,image,price,id}=item
-                            return <li className=' bg-white shadow-md  justify-center rounded overflow-hidden w-full max-w-48 min-w-48' key={id} onClick={()=>dispatch(SETCURRENTPRODUCT(item))} >
-                             <div className=' w-full h-32'>
-                              <Lazy src={image} alt='image' variant="rectangular" height='100%'
-                              />
-                             </div>
-                             <div className='p-3'>
-                             <p>{name}</p>
-                             <p>₦ {price}</p>
-                             </div>      
-                            </li>
+                            return <Card item={item} root/>
                         })   
                         }
                     </ul>

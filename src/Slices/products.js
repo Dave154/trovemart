@@ -1,25 +1,26 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-// import data from '.././components/products.json'
+import data from '.././components/products.json'
 import axios from 'axios';
 export const fetchProducts = createAsyncThunk(
     'products/fetchProducts',
     async (url) => {
-       // const response = await new Promise((resolve,reject)=>{
-       //  if(data){
-       //    setTimeout(()=>{
-       //   resolve(data)
-       // },5000)
-       //  }
-       //  else {
-       //    reject(null)
-       //  }
-       // })
-        const response = await axios.get(url)
-         return response.data.data;
+       const response = await new Promise((resolve,reject)=>{
+        if(data){
+          setTimeout(()=>{
+         resolve(data)
+       },1000)
+        }
+        else {
+          reject(null)
+        }
+       })
+       return response
+        // const response = await axios.get(url)
+        //  return response.data.data;
     }
 );
 
-
+const localfavorite =localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')):[]
 const productsSlice = createSlice({
     name: 'products',
     initialState: {
@@ -37,6 +38,7 @@ const productsSlice = createSlice({
         categories: null,
         loading: false,
         error: null,
+        favorites:localfavorite,
     },
     reducers: {
         SETCATEGORIES: (state, action) => {
