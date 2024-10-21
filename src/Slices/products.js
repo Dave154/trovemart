@@ -1,22 +1,21 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import data from '.././components/products.json'
 import axios from 'axios';
 export const fetchProducts = createAsyncThunk(
     'products/fetchProducts',
     async (url) => {
-       const response = await new Promise((resolve,reject)=>{
-        if(data){
-          setTimeout(()=>{
-         resolve(data)
-       },3000)
-        }
-        else {
-          reject(null)
-        }
-       })
-       return response
-        // const response = await axios.get(url)
-        //  return response.data.data;
+       // const response = await new Promise((resolve,reject)=>{
+       //  if(data){
+       //    setTimeout(()=>{
+       //   resolve(data)
+       // },3000)
+       //  }
+       //  else {
+       //    reject(null)
+       //  }
+      // })
+      // return response
+        const response = await axios.get(url)
+         return response.data.data;
     }
 );
 
@@ -70,7 +69,6 @@ const productsSlice = createSlice({
         },
         SETCURRENTCATEGORY: (state,action)=>{
           state.currentCategory= action.payload
-          console.log(action.payload)
           state.currentProducts= state.productsDisplayed?.filter(item=>{
             if(action.payload !== 'All'){
             return item.category.includes(action.payload)
@@ -98,7 +96,10 @@ const productsSlice = createSlice({
         },
         SETCURRENTPRODUCT: (state,action)=>{
           state.currentProduct = action.payload.name
-        },                                                              
+        },   
+        CLOSEERROR:(state)=>{
+          state.error= null
+        }                                                           
     },
     extraReducers: (builder) => {
         builder
@@ -112,13 +113,16 @@ const productsSlice = createSlice({
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.loading = false;
+                if (error.type === 'AxiosError') {
                 state.error = action.error.message;
+                }
             });
     },
 });
 
 // Export actions and reducer
 export const {
+  CLOSEERROR,
 SETCATEGORIES,
 SETMAINCATEGORIES,
 SETPRODUCTSDISPLAYED,

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Outlet } from 'react-router-dom'
-import { Container, Divider, AppBar, Fab, Badge ,Alert,Collapse,IconButton} from '@mui/material'
-import { Home, ShoppingCartOutlined,Close } from '@mui/icons-material'
+import { Container, Divider, AppBar, Fab, Badge ,Alert,Collapse,IconButton,Modal} from '@mui/material'
+import { Home, ShoppingCartOutlined,Close,Error } from '@mui/icons-material'
 import Topnav from './topnav.jsx'
 import Search from './search.jsx'
 import Categories from './categories.jsx'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts,SETMAINCATEGORIES, SETCATEGORIES, SETPAGINATION, SETDEPTH } from '.././Slices/products.js';
+import { fetchProducts,SETMAINCATEGORIES, SETCATEGORIES, SETPAGINATION, SETDEPTH,CLOSEERROR } from '.././Slices/products.js';
 import { GETTOTAL,REMOVEALERT,ITEMCHANGEALERT,SUCCESSORDERS } from '.././Slices/cart.js';
 
 const Navigation = ({ showCat,mt}) => {
@@ -14,7 +14,7 @@ const Navigation = ({ showCat,mt}) => {
     const dispatch = useDispatch();
     const { popup } = useSelector((state) => state.appbar);
     const { amount, cartList, alert,orders} = useSelector((state) => state.cart);
-    const { products, categories, currentCategory, currentMain, productsDisplayed, currentProduct } = useSelector((state) => state.products);
+    const { products, categories, currentCategory, currentMain, productsDisplayed, currentProduct,error } = useSelector((state) => state.products);
     const nestedCategories ={};
     products?.forEach(item => {
         const levels = item.category.split('/');
@@ -73,7 +73,7 @@ const Navigation = ({ showCat,mt}) => {
         color:'black',
         boxShadow:'4px 2px 5px rgba(200,200,200,.1)'
     }} >
-            <Collapse in={alert ? true: false} sx={{
+        <Collapse in={alert ? true: false} sx={{
                 position:'fixed',
                 width:'100%',
                 zIndex:'1200'
@@ -115,6 +115,19 @@ const Navigation = ({ showCat,mt}) => {
     </AppBar> 
     <Container maxWidth = 'xl'
     sx = { { mt: mt} } >
+     <Modal open={ error ? true: false}
+     onClose={()=>dispatch(CLOSEERROR())}
+     >
+         <div className='bg-white grid place-items-center absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 py-16 rounded-2xl w-full max-w-sm'>
+              <i>
+             <Error color='error' fontSize='large'/>
+         </i>
+          <p>
+              {error}
+          </p>
+         </div>
+      
+     </Modal>
         <div className='md:hidden' >
         <Fab size="small"  aria-label="cart" onClick={()=>{
         	 navigate('/cart')

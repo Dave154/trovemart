@@ -1,7 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Fab, Skeleton } from '@mui/material'
 import { Add,WhatshotOutlined } from '@mui/icons-material'
-import pro from './products.json'
 import drinks from '.././assets/drinks.svg'
 import grain from '.././assets/grain.svg'
 import laundry from '.././assets/laundry.svg'
