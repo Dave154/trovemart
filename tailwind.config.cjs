@@ -7,12 +7,16 @@ module.exports = {
     extend: {
       colors: {
         accent: '#E51E54',
+        popup: 'rgba(255,255,255,.1)',
       },
       gridTemplateColumns: {
         'auto-fit-sm': 'repeat(auto-fit, minmax(150px, 1fr))',
         'auto-fit-md': 'repeat(auto-fit, minmax(200px, 1fr))'
       },
+        fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+        custom: ['CustomFont', 'sans-serif'], // For self-hosted font
+      },
     },
   },
-  plugins: [],
 };

@@ -17,14 +17,12 @@ const appbarSlice = createSlice({
     error: null,
   },
   reducers: {
-    DYNAMICSEARCH: (state,action) => {
-      state.dynamicSearch = action.payload;
-    },
-    SEARCH: (state,action)=>{
-        state.search= action.payload
-    },
+  
     HANDLESIGN: (state) => {
       state.signBar= !state.signBar
+    },
+    HANDLESIGNCLOSE : (state)=>{
+      state.signBar = false
     },
     HANDLESCROLL :(state,action)=>{
       state.scroll=action.payload
@@ -42,5 +40,5 @@ const appbarSlice = createSlice({
 });
 
 // Export actions and reducer
-export const { DYNAMICSEARCH,SEARCH,HANDLESIGN,HANDLESCROLL,HANDLEPOPUP,HANDLECATEGORIESSCROLLNEXT,HANDLECATEGORIESSCROLLPREV} = appbarSlice.actions;
+export const { DYNAMICSEARCH,SEARCH,HANDLESIGN,HANDLESIGNCLOSE,HANDLESCROLL,HANDLEPOPUP,HANDLECATEGORIESSCROLLNEXT,HANDLECATEGORIESSCROLLPREV} = appbarSlice.actions;
 export default appbarSlice.reducer;

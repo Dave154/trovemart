@@ -1,32 +1,41 @@
 import logo from '.././assets/trove.svg'
-import { Skeleton, Divider,Fab ,Badge,Accordion,AccordionSummary, AccordionDetails} from '@mui/material'
-import { Menu, AccountCircleRounded,ArrowBackIosNewRounded ,ShoppingCartOutlined,ArrowDropDown} from '@mui/icons-material'
+import { Skeleton, Divider,Fab ,Badge,Accordion,AccordionSummary, AccordionDetails,Button} from '@mui/material'
+import { Menu, AccountCircleRounded ,ShoppingCartOutlined, ShoppingBagOutlined,ArrowDropDown,PersonOutlined} from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux';
-import { HANDLESIGN } from '.././Slices/appbar.js';
+import { HANDLESIGN,HANDLESIGNCLOSE } from '.././Slices/appbar.js';
 import { SETCATEGORIES, SETPRODUCTSDISPLAYED, SETPAGINATION } from '.././Slices/products.js';
 import { HANDLESCROLL } from '.././Slices/appbar.js';
 import { useState,useEffect} from 'react'
 import Close from './close.jsx'
+import {auth} from '../.././firebase.js'
+import {signOut} from 'firebase/auth'
 import {useNavigate,useParams} from 'react-router-dom'
 const list = [{
         txt: 'Sign Up',
-        route: 'signup'
+        route: '/signup'
     },
     {
         txt: 'Log In',
-        route: 'login'
+        route: '/login'
     },
 
 ]
 const Topnav = () => {
-  const {category} = useParams()
-  const navigate= useNavigate()
-    const dispatch = useDispatch() 
+    const {category} = useParams()
+    const navigate= useNavigate()
+    const dispatch = useDispatch()
+    const { searchopen} = useSelector((state) => state.search);
+    const { amount,orders} = useSelector((state) => state.cart); 
+    const { signBar,scroll } = useSelector((state) => state.appbar);
+    const { currentUser } = useSelector((state) => state.auth);
+    const { mainCategories} = useSelector((state) => state.products);
+   
   let lastScrollTop = 0;  
   useEffect(() => {
+
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (scrollTop > lastScrollTop) {
+      if (scrollTop > lastScrollTop && !searchopen){
         dispatch(HANDLESCROLL(true))
       } else {
        dispatch(HANDLESCROLL(false)) 
@@ -37,12 +46,8 @@ const Topnav = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [searchopen]);
 
-
-
-    const { signBar,scroll } = useSelector((state) => state.appbar);
-    const { mainCategories} = useSelector((state) => state.products);
     return <header>
     <nav className='flex justify-between  py-3 items-start cursor-pointer'>
         <div className='flex items-center gap-3' onClick={()=>{
@@ -57,9 +62,9 @@ const Topnav = () => {
         <div className={`grid place-items-center gap-6 ${scroll && 'hidden'}`}>
           <div className=' gap-2 hidden md:flex '>
           {
-            mainCategories ? mainCategories.map((item,index)=>{
-             return  <h2 className ={`text-xs p-2 px-4 rounded-2xl cursor-pointer ${item === category && 'bg-gray-200' }  hover:bg-gray-100 `} key={index} onClick={()=>{
-              navigate(item)
+            mainCategories?.length >0 ? mainCategories.map((item,index)=>{
+             return  <h2 className ={`sm:text-[.7rem] text-sm p-2 rounded-2xl cursor-pointer ${item === category && 'bg-gray-200' }  hover:bg-gray-100 `} key={index} onClick={()=>{
+              navigate(`/${item}`)
             } }>
                {item}
                </h2> 
@@ -76,29 +81,86 @@ const Topnav = () => {
           
         </div>
         <div className='relative flex items-center gap-8'>
-        <div className='hidden md:block'>
-         <Badge color="secondary"  badgeContent={100} sx={{
-            span:{
-              background:'#E51E54'
-            }  
-         }}>
-          <ShoppingCartOutlined />
-        </Badge>
+        <div className='flex items-center gap-4'>
+              <div className='hidden md:block'>
+                 <Badge color="secondary" className='hidden' badgeContent={amount} sx={{
+                    span:{
+                      background:'#E51E54'
+                    },
+                    '& svg':{
+                      color: ''
+                    },
+                    '&:hover':{
+                      '& p': {
+                        opacity:1
+                      }
+                    }
+                 }}
+                 onClick={()=>navigate('/cart')}
+                 >
+                  <ShoppingCartOutlined />
+                  <p className='text-accent absolute -bottom-full right-0 opacity-0 pb-2 transition-all'>Cart</p>
+                </Badge>
+              </div>
+            <div>
+                <Badge color="secondary"  badgeContent={orders.filter(item=>item.status === 'pending').length} sx={{
+                    span:{
+                      background:'#E51E54'
+                    },
+                    '& svg':{
+                      color: ''
+                    },
+                    '&:hover':{
+                      '& p': {
+                        opacity:1
+                      }
+                    }
+                 }}
+                 onClick={()=>navigate('/cart/orders')}
+                 >
+                  <ShoppingBagOutlined />
+                  <p className='text-accent absolute -bottom-full  pb-2 right-0 opacity-0 transition-all'>Orders</p>
+                </Badge>
+            </div>
         </div>
         <div>
-          <div className='flex gap-6 border-2 border-gray-200 rounded-3xl p-1 px-2 cursor-pointer hover:shadow-md' onClick={()=>dispatch(HANDLESIGN())} >
+          <div className='flex gap-6 border-2 border-gray-200 rounded-3xl p-1 px-2 cursor-pointer hover:shadow-md' onClick={()=>{
+           dispatch(HANDLESIGN())
+         }} >
             <i><Menu/></i>
             <i><AccountCircleRounded/></i>
           </div>
-          <Close condition={signBar} Func={HANDLESIGN}>
+          <Close condition={signBar} Func={HANDLESIGNCLOSE}>
                      {
             signBar &&  <div className='shadow-md  absolute z-20 -bottom-100 right-0 rounded-md mt-2 bg-white'>
-            <ul className=' w-80 md:w-40'>
+            {
+              currentUser ? <div className="h-72 w-64 rounded-xl  overflow-hidden flex flex-col pb-4">
+                 <div className="bg-pink-100 relative w-full h-24"> 
+                    <div className="rounded-full w-16 h-16 grid place-content-center overflow-hidden border-2 border-double absolute left-1 -bottom-1/2 bg-gray-100">
+                      <PersonOutlined fontSize='large' />
+                    </div>
+                 </div>
+                 <div className="mt-12 px-4">
+                   <p className="font-bold "
+                   >{currentUser.displayName}</p>
+                 </div>
+                   <div className=" flex justify-center mt-auto">
+                   <Button variant='contained' sx={{
+                    background:'#E52E54',
+                   }} onClick={()=>signOut(auth)}>
+                     Sign Out
+                   </Button>
+                   </div>
+              </div>
+              :  <ul className=' w-80 md:w-40'>
               
             {
               list.map((item,index)=>{
                 const {txt,route}=item
-                return <li key={index} className='p-2 hover:bg-gray-200' onClick={()=>dispatch(HANDLESIGN())}>
+                return <li key={index} className='p-2 hover:bg-gray-200' onClick={()=>{
+                  navigate(route)
+                  dispatch(HANDLESIGN())
+                }}>
                   <p>{txt}</p>
                 </li>
               })
@@ -119,19 +181,27 @@ const Topnav = () => {
               </AccordionSummary>
               <AccordionDetails>
                  {
-                mainCategories?.map((item,index)=>{
+                mainCategories?.length > 0 ? mainCategories.map((item,index)=>{
                   return  <h2 className ={`text-sm p-3 px-4 rounded-2xl cursor-pointer ${item === category && 'bg-gray-200' }  hover:bg-gray-100 `} key={index} onClick={()=>{
-                       navigate(item)
+                       navigate(`/${item}`)
                        dispatch(HANDLESIGN())
             } }>
                {item}
                </h2>
-                })
+                }) : <div>
+                  <Skeleton variant="text" width={'100%'} />
+                   <Skeleton variant="text" width={'100%'} />
+                    <Skeleton variant="text" width={'100%'} />
+                     <Skeleton variant="text" width={'100%'} />
+                </div>
                }
               </AccordionDetails>
             </Accordion>
              </li>
             </ul>
+
+            }
+          
           </div>
           }
          

@@ -1,27 +1,29 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import data from '.././components/products.json'
 import axios from 'axios';
 export const fetchProducts = createAsyncThunk(
     'products/fetchProducts',
-    async () => {
-       const response = await new Promise((resolve,reject)=>{
-        if(data){
-         resolve(data)
-        }
-        else {
-          reject(null)
-        }
-       })
-        // const response = await axios.get(url)
-         return response;
+    async (url) => {
+       // const response = await new Promise((resolve,reject)=>{
+       //  if(data){
+       //    setTimeout(()=>{
+       //   resolve(data)
+       // },3000)
+       //  }
+       //  else {
+       //    reject(null)
+       //  }
+      // })
+      // return response
+        const response = await axios.get(url)
+         return response.data.data;
     }
 );
 
-
+const localfavorite =localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')):[]
 const productsSlice = createSlice({
     name: 'products',
     initialState: {
-        products: data,
+        products: [],
         productsDisplayed:null,
         currentProducts:[],
         currentProduct:null,
@@ -35,6 +37,7 @@ const productsSlice = createSlice({
         categories: null,
         loading: false,
         error: null,
+        favorites:localfavorite,
     },
     reducers: {
         SETCATEGORIES: (state, action) => {
@@ -47,14 +50,22 @@ const productsSlice = createSlice({
         SETPRODUCTSDISPLAYED: (state,action)=>{
           state.currentMain= action.payload
           state.productsDisplayed = state.products.filter(item=>{
-            if ( action.payload) {
               return item.category.includes(action.payload) 
-          }else{
-            return item
-          }
-
-            
           })
+        },
+        SETPRODUCTSDISPLAYEDONSEARCH: (state,action)=>{
+          state.currentMain= 'AllProducts'
+          state.currentCategory= action.payload ? action.payload : null
+          state.currentProducts = state.products.filter(item=>{
+            if (action.payload) {
+              if (item.name.toLowerCase().includes(action.payload.toLowerCase()) || item.category.toLowerCase().includes(action.payload.toLowerCase())) {
+                return item
+               }             
+            }else{
+              return item
+            }
+
+        })
         },
         SETCURRENTCATEGORY: (state,action)=>{
           state.currentCategory= action.payload
@@ -67,11 +78,10 @@ const productsSlice = createSlice({
           })  
         },
          SETPAGINATION: (state,action)=> {
-
           state.pageNumber=action.payload
-          state.pageList =(state.productsDisplayed?.length / 80)
+          state.pageList = state.currentProducts?.length / 50 > 1 ? parseFloat((state.currentProducts?.length / 50).toFixed(0)) : 1 
           state.paginatedProducts=state.currentProducts?.filter((item,index)=>{
-                  if(index <= ((state.pageNumber *80)-1) && index >= (state.pageNumber-1 )*80 ){
+                  if(index <= ((state.pageNumber *50)-1) && index >= (state.pageNumber-1 )*50 ){
                     return item
                   }
                 });
@@ -86,7 +96,10 @@ const productsSlice = createSlice({
         },
         SETCURRENTPRODUCT: (state,action)=>{
           state.currentProduct = action.payload.name
-        }                                                                 
+        },   
+        CLOSEERROR:(state)=>{
+          state.error= null
+        }                                                           
     },
     extraReducers: (builder) => {
         builder
@@ -100,19 +113,23 @@ const productsSlice = createSlice({
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.loading = false;
+                if (error.type === 'AxiosError') {
                 state.error = action.error.message;
+                }
             });
     },
 });
 
 // Export actions and reducer
 export const {
+  CLOSEERROR,
 SETCATEGORIES,
 SETMAINCATEGORIES,
 SETPRODUCTSDISPLAYED,
 SETPAGINATION,
 SETCURRENTCATEGORY,
 SETDEPTH,
-SETCURRENTPRODUCT
+SETCURRENTPRODUCT,
+SETPRODUCTSDISPLAYEDONSEARCH
 } = productsSlice.actions;
 export default productsSlice.reducer;
