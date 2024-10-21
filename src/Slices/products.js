@@ -113,7 +113,8 @@ const productsSlice = createSlice({
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.loading = false;
-                if (error.type === 'AxiosError') {
+                  console.log(action.error.name)
+                if (action.error.name === 'AxiosError') {
                 state.error = action.error.message;
                 }
             });

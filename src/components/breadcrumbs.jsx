@@ -17,6 +17,7 @@ const Index = () => {
         onClick={()=>{
             if (index === 0) {
                   navigate('/')
+
              }else if(index === 1){
                 if(item=== 'AllProducts'){
                 navigate(`/allproducts`)
