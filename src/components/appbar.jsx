@@ -34,9 +34,7 @@ const Navigation = ({ showCat,mt}) => {
 
 // USEEFFECTS
 
-    useEffect(() => {
-        dispatch(fetchProducts('https://products-orcin.vercel.app/product?page=1&limit=3761'));         
-    }, []);
+
 //
      useEffect(()=>{
         dispatch(SUCCESSORDERS(orders.filter(item=> item.status ==='completed').length))

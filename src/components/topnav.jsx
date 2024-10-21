@@ -1,5 +1,5 @@
-import logo from '.././assets/trove.svg'
-import { Skeleton, Divider,Fab ,Badge,Accordion,AccordionSummary, AccordionDetails,Button} from '@mui/material'
+import Logo from './logo.jsx'
+ import { Skeleton, Divider,Fab ,Badge,Accordion,AccordionSummary, AccordionDetails,Button} from '@mui/material'
 import { Menu, AccountCircleRounded ,ShoppingCartOutlined, ShoppingBagOutlined,ArrowDropDown,PersonOutlined} from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux';
 import { HANDLESIGN,HANDLESIGNCLOSE } from '.././Slices/appbar.js';
@@ -49,16 +49,8 @@ const Topnav = () => {
   }, [searchopen]);
 
     return <header>
-    <nav className='flex justify-between  py-3 items-start cursor-pointer'>
-        <div className='flex items-center gap-3' onClick={()=>{
-          // dispatch(SETPRODUCTSDISPLAYED([]))
-          navigate('/')
-        } }>
-          <span className="logo w-10">
-            <img src={logo} alt="logo"/>
-          </span>
-          <h2 className={`text-accent invisible md:visible font-extrabold ${scroll ? 'text-base' : 'text-xl' }`}>trovemart</h2>
-        </div>
+    <nav className='flex justify-between gap-5  py-3 items-start cursor-pointer'>
+       <Logo scroll={scroll}/>
         <div className={`grid place-items-center gap-6 ${scroll && 'hidden'}`}>
           <div className=' gap-2 hidden md:flex '>
           {

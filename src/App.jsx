@@ -13,12 +13,14 @@ import Orders from './Pages/Cart/orders.jsx'
 import CheckOut from './Pages/Cart/checkout.jsx'
 import Login from './Pages/Auth/login.jsx'
 import SignUp from './Pages/Auth/signup.jsx'
-import { Routes, Route ,Navigate} from 'react-router-dom'
+import Footer from './components/footer.jsx'
+ import { Routes, Route ,Navigate} from 'react-router-dom'
 import {useSelector,useDispatch} from 'react-redux'
 import {CURRENTUSER,PHONE} from './Slices/auth.js'
 const App = () => {
   const dispatch = useDispatch()
   const {currentUser} = useSelector(state=>state.auth)
+
 
 
 useEffect(()=>{
@@ -64,6 +66,7 @@ useEffect(()=>{
     <Route path='/login' element={<Login/>} />
     <Route path='*' element={<h1>ERROR</h1>}/>
   </Routes>
+  <Footer/>
   </>
 }
 export default App

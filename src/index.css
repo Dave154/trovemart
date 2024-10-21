@@ -38,6 +38,9 @@ li{
 .horizontal-scroll::-webkit-scrollbar{
 	height: 0;
 }
+.hidden-scroll::-webkit-scrollbar{
+	width: 0;
+}
 .auth_form p{
 	position: relative;
 }
