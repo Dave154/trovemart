@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from 'react-redux';
              <ul className=' grid grid-cols-auto-fit-sm md:grid-cols-auto-fit-md gap-4'>
             { products?.length > 0 ? 
                list?.map(item=>{
-                // const {id,image,name,price}=item
                 return <Card
                 key={item.id}
                 item={item}
@@ -45,15 +44,6 @@ import { useDispatch, useSelector } from 'react-redux';
                          dispatch(SETPAGINATION(1))
                     }
                   }} />
-{/*                    <button className='bg-gray-400 rounded p-6' onClick={()=>{
-                        if(pageNumber > 1)
-                        dispatch(SETPAGINATION(pageNumber - 1))
-                    }}>Prev</button>
-                    <button className='bg-gray-400 rounded p-6' onClick={()=> {
-                        if(pageNumber < pageList){
-                        dispatch(SETPAGINATION(pageNumber + 1)) 
-                        }
-                    }}>Next</button>*/}
                 </div>
             }
        </section> 

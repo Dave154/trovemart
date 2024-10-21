@@ -8,7 +8,7 @@ export const fetchProducts = createAsyncThunk(
         if(data){
           setTimeout(()=>{
          resolve(data)
-       },1000)
+       },3000)
         }
         else {
           reject(null)
@@ -51,11 +51,7 @@ const productsSlice = createSlice({
         SETPRODUCTSDISPLAYED: (state,action)=>{
           state.currentMain= action.payload
           state.productsDisplayed = state.products.filter(item=>{
-            if (action.payload) {
               return item.category.includes(action.payload) 
-          }else{
-            return item
-            } 
           })
         },
         SETPRODUCTSDISPLAYEDONSEARCH: (state,action)=>{
@@ -74,6 +70,7 @@ const productsSlice = createSlice({
         },
         SETCURRENTCATEGORY: (state,action)=>{
           state.currentCategory= action.payload
+          console.log(action.payload)
           state.currentProducts= state.productsDisplayed?.filter(item=>{
             if(action.payload !== 'All'){
             return item.category.includes(action.payload)

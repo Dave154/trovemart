@@ -19,10 +19,10 @@ const Index = () => {
                   navigate('/store')
              }else if(index === 1){
                 if(item=== 'AllProducts'){
-                navigate(`/store/allproducts`)
+                navigate(`/allproducts`)
                 }else{
                 dispatch(SETCURRENTCATEGORY('All'))
-               navigate(`/store/${item}`)    
+               navigate(`/${item}`)    
                 }
              }
         }}

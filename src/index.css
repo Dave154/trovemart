@@ -12,6 +12,7 @@
 
 input{
 	outline: 0;
+	font-size: 1rem;
 }
 img{
 	width: 100%;
@@ -37,6 +38,54 @@ li{
 .horizontal-scroll::-webkit-scrollbar{
 	height: 0;
 }
+.auth_form p{
+	position: relative;
+}
+
+.auth_form p:after{
+	content: '*';
+	color: #e51e54;
+}
+
+.loader {
+  width: 4px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow: 
+    19px -19px 0 0px #E52E54, 38px -19px 0 0px  #E52E54, 57px -19px 0 0px  #E52E54,
+    19px 0     0 5px #E52E54, 38px 0     0 5px  #E52E54, 57px 0     0 5px #E52E54 ,
+    19px 19px  0 0px #E52E54, 38px 19px  0 0px  #E52E54, 57px 19px  0 0px #E52E54;
+
+  transform: translateX(-38px);
+  animation: loader 2s infinite linear;
+}
+
+@keyframes loader {
+  12.5% {box-shadow: 
+    19px -19px 0 0px, 38px -19px 0 0px, 57px -19px 0 5px #E52E54,
+    19px 0 0 5px  #E52E54, 38px 0     0 0px, 57px 0     0 5px #E52E54,
+    19px 19px  0 0px, 38px 19px  0 0px, 57px 19px  0 0px}
+  25%   {box-shadow: 
+    19px -19px 0 5px, 38px -19px 0 0px, 57px -19px 0 5px #E52E54,
+    19px 0     0 0px, 38px 0     0 0px  #E52E54, 57px 0     0 0px #E52E54,
+    19px 19px  0 0px  #E52E54, 38px 19px  0 5px, 57px 19px  0 0px}
+  50%   {box-shadow: 
+    19px -19px 0 5px, 38px -19px 0 5px, 57px -19px 0 0px,
+    19px 0     0 0px, 38px 0     0 0px, 57px 0     0 0px,
+    19px 19px  0 0px, 38px 19px  0 0px  #E52E54, 57px 19px  0 5px}
+  62.5% {box-shadow: 
+    19px -19px 0 0px, 38px -19px 0 0px, 57px -19px 0 0px,
+    19px 0     0 5px, 38px 0 0 0px, 57px 0     0 0px,
+    19px 19px  0 0px, 38px 19px  0 5px, 57px 19px  0 5px}
+  75%   {box-shadow: 
+    19px -19px 0 0px, 38px -19px 0 5px, 57px -19px 0 0px,
+    19px 0     0 0px, 38px 0     0 0px, 57px 0     0 5px,
+    19px 19px  0 0px  #E52E54, 38px 19px  0 0px, 57px 19px  0 5px}
+  87.5% {box-shadow: 
+    19px -19px 0 0px, 38px -19px 0 5px, 57px -19px 0 0px,
+    19px 0     0 0px, 38px 0     0 5px, 57px 0     0 0px,
+    19px 19px  0 5px, 38px 19px  0 0px, 57px 19px  0 0px}
+} 
 
 ::-webkit-scrollbar{
 	width: 3px;

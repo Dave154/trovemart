@@ -1,15 +1,17 @@
 import Navigation from '../.././components/appbar.jsx'
 import { Container, Button } from '@mui/material'
-import {ArrowBack,Delete,Phone} from '@mui/icons-material'
+import {ArrowBack,Delete,Phone,DeleteSweep} from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
 import {useNavigate}  from 'react-router-dom'
 import logo from '../.././assets/trove.svg'
 import Lazy  from  '../.././components/lazyload.jsx'
 import Card from '../.././components/card.jsx';
+import ScrollBtn from '../.././components/scroll.jsx';
 import AmountToggler from '../.././components/amountToggler.jsx'
-import {REMOVEITEM} from '../.././Slices/cart.js';
-
+import {REMOVEITEM,CLEARCART} from '../.././Slices/cart.js';
+import {useRef} from 'react'
 const Index = () => {
+	const scrollRef= useRef(null)
 	const dispatch= useDispatch()
 	const navigate = useNavigate()
     const { cartList , amount, subtotal,recentlyViewed} = useSelector((state) => state.cart)
@@ -67,6 +69,14 @@ const Index = () => {
 								</div>
 							</div>
 						})}
+						<Button className="flex items-center cursor-pointer" sx={{
+										color:'#E51E54'
+									}} onClick={()=>{
+										dispatch(CLEARCART())
+									}}>
+										<DeleteSweep size='large'/>
+										<p className="text-sm">Clear Cart</p>
+									</Button>
 					</div>
 				</div>
 				<article className="md:bg-white  mt-10 h-fit rounded-xl md:shadow">
@@ -110,7 +120,7 @@ const Index = () => {
 						paddingBlock:'1rem'
 						
 					}} onClick={()=>{
-						navigate('/store')
+						navigate('/')
 					}}>
 						Start Shopping
 					</Button>
@@ -120,24 +130,14 @@ const Index = () => {
 
 			</article>
 			
-			<div className='bg-white rounded-xl p-4 overflow-hidden grid' >
+			<div className='bg-white rounded-xl relative p-4 overflow-hidden grid' >
 				<h3 className='text-xl'>
 					Recently viewed
 				</h3>
-				<div className='flex py-4 gap-4  overflow-auto horizontal-scroll '>
-				
+					<ScrollBtn scrollRef={scrollRef}/>
+				<div className='flex py-4 gap-4  relative overflow-auto horizontal-scroll' ref={scrollRef} >
 					{ recentlyViewed.slice(0, 10).map((item)=>{
-                            const {name,image,price,id}=item
-                            return <div className=' bg-white shadow-md  justify-center rounded overflow-hidden w-full max-w-48 min-w-48' key={id}>
-                             <div className=' w-full h-32'> 
-                              <Lazy src={image} alt='image' variant="rectangular" height='100%'
-                              />
-                             </div>
-                             <div className='p-3'>
-                             <p>{name}</p>
-                             <p>₦ {price}</p>
-                             </div>      
-                            </div>
+                            return <Card root item={item}/>
                         })   
                         }
 				

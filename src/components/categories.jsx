@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Fab, Skeleton } from '@mui/material'
-import { Add, ArrowBackIosNewRounded, ArrowForwardIosRounded,WhatshotOutlined } from '@mui/icons-material'
+import { Add,WhatshotOutlined } from '@mui/icons-material'
 import pro from './products.json'
 import drinks from '.././assets/drinks.svg'
 import grain from '.././assets/grain.svg'
@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {  SETCURRENTCATEGORY, SETCURRENTPRODUCT } from '.././Slices/products.js';
 import { HANDLECATEGORIESSCROLLNEXT, HANDLECATEGORIESSCROLLPREV } from '.././Slices/appbar.js';
 import Lazy from './lazyload.jsx'
-
+import ScrollBtn from './scroll.jsx'
 const Categories = () => {
 	const icons={
 		All: hot,
@@ -38,16 +38,7 @@ const Categories = () => {
     const { categories, currentCategory, currentMain} = useSelector((state) => state.products);
    
 
-    // SCROLL WITH BTN
-      const listScroll = (where) => {
-        if (scrollRef.current) {
-            const scrollAmount = where === 'left' ? -250 : 250;
-            scrollRef.current.scrollBy({
-                left: scrollAmount,
-                behavior: 'smooth',
-            });
-        }
-    }
+   
   
     // USEEFFECTS //
  
@@ -78,29 +69,9 @@ const Categories = () => {
 //
     return (
         <div className='list_container relative'> 
+         <ScrollBtn scrollRef={scrollRef} top/>
 			<ul className="flex overflow-x-auto w-full  gap-10 list py-1 " ref={scrollRef}>
-			<Fab onClick={()=>listScroll('left')} aria-label="Back"   className='scroll-back' sx={{
-				display: !scrollPrev && 'none',
-				background:'white',
-				position:'absolute',
-				top:'0',
-				left:'0',
-				transform:'scale(0.5)',
-				zIndex:1,
-			}}>
-  			<ArrowBackIosNewRounded />
-			</Fab>
-			<Fab onClick={()=>listScroll('right')}   aria-label="Forward" className='scroll-forward' sx={{
-				display: !scrollNext && 'none' ,
-				background:'white',
-				position:'absolute',
-				top:'0',
-				right:'0',
-				transform:'scale(0.5)',
-				zIndex:1,
-			}}>
-			  <ArrowForwardIosRounded />
-			</Fab>
+			
 				{ (categories && categories.length > 0)?
 					categories.map((item,i)=>{
 						const icon= icons[item.replace(/[^a-zA-Z0-9]/g, '')]

@@ -1,12 +1,14 @@
 import logo from '.././assets/trove.svg'
-import { Skeleton, Divider,Fab ,Badge,Accordion,AccordionSummary, AccordionDetails} from '@mui/material'
-import { Menu, AccountCircleRounded,ArrowBackIosNewRounded ,ShoppingCartOutlined, ShoppingBagOutlined,ArrowDropDown} from '@mui/icons-material'
+import { Skeleton, Divider,Fab ,Badge,Accordion,AccordionSummary, AccordionDetails,Button} from '@mui/material'
+import { Menu, AccountCircleRounded ,ShoppingCartOutlined, ShoppingBagOutlined,ArrowDropDown,PersonOutlined} from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux';
 import { HANDLESIGN,HANDLESIGNCLOSE } from '.././Slices/appbar.js';
 import { SETCATEGORIES, SETPRODUCTSDISPLAYED, SETPAGINATION } from '.././Slices/products.js';
 import { HANDLESCROLL } from '.././Slices/appbar.js';
 import { useState,useEffect} from 'react'
 import Close from './close.jsx'
+import {auth} from '../.././firebase.js'
+import {signOut} from 'firebase/auth'
 import {useNavigate,useParams} from 'react-router-dom'
 const list = [{
         txt: 'Sign Up',
@@ -19,12 +21,13 @@ const list = [{
 
 ]
 const Topnav = () => {
-  const {category} = useParams()
-  const navigate= useNavigate()
+    const {category} = useParams()
+    const navigate= useNavigate()
     const dispatch = useDispatch()
-     const { searchopen} = useSelector((state) => state.search);
-     const { amount,orders} = useSelector((state) => state.cart); 
+    const { searchopen} = useSelector((state) => state.search);
+    const { amount,orders} = useSelector((state) => state.cart); 
     const { signBar,scroll } = useSelector((state) => state.appbar);
+    const { currentUser } = useSelector((state) => state.auth);
     const { mainCategories} = useSelector((state) => state.products);
    
   let lastScrollTop = 0;  
@@ -49,7 +52,7 @@ const Topnav = () => {
     <nav className='flex justify-between  py-3 items-start cursor-pointer'>
         <div className='flex items-center gap-3' onClick={()=>{
           // dispatch(SETPRODUCTSDISPLAYED([]))
-          navigate('/store')
+          navigate('/')
         } }>
           <span className="logo w-10">
             <img src={logo} alt="logo"/>
@@ -60,8 +63,8 @@ const Topnav = () => {
           <div className=' gap-2 hidden md:flex '>
           {
             mainCategories?.length >0 ? mainCategories.map((item,index)=>{
-             return  <h2 className ={`text-xs p-2 px-4 rounded-2xl cursor-pointer ${item === category && 'bg-gray-200' }  hover:bg-gray-100 `} key={index} onClick={()=>{
-              navigate(`/store/${item}`)
+             return  <h2 className ={`sm:text-[.7rem] text-sm p-2 rounded-2xl cursor-pointer ${item === category && 'bg-gray-200' }  hover:bg-gray-100 `} key={index} onClick={()=>{
+              navigate(`/${item}`)
             } }>
                {item}
                </h2> 
@@ -130,7 +133,26 @@ const Topnav = () => {
           <Close condition={signBar} Func={HANDLESIGNCLOSE}>
                      {
             signBar &&  <div className='shadow-md  absolute z-20 -bottom-100 right-0 rounded-md mt-2 bg-white'>
-            <ul className=' w-80 md:w-40'>
+            {
+              currentUser ? <div className="h-72 w-64 rounded-xl  overflow-hidden flex flex-col pb-4">
+                 <div className="bg-pink-100 relative w-full h-24"> 
+                    <div className="rounded-full w-16 h-16 grid place-content-center overflow-hidden border-2 border-double absolute left-1 -bottom-1/2 bg-gray-100">
+                      <PersonOutlined fontSize='large' />
+                    </div>
+                 </div>
+                 <div className="mt-12 px-4">
+                   <p className="font-bold "
+                   >{currentUser.displayName}</p>
+                 </div>
+                   <div className=" flex justify-center mt-auto">
+                   <Button variant='contained' sx={{
+                    background:'#E52E54',
+                   }} onClick={()=>signOut(auth)}>
+                     Sign Out
+                   </Button>
+                   </div>
+              </div>
+              :  <ul className=' w-80 md:w-40'>
               
             {
               list.map((item,index)=>{
@@ -161,7 +183,7 @@ const Topnav = () => {
                  {
                 mainCategories?.length > 0 ? mainCategories.map((item,index)=>{
                   return  <h2 className ={`text-sm p-3 px-4 rounded-2xl cursor-pointer ${item === category && 'bg-gray-200' }  hover:bg-gray-100 `} key={index} onClick={()=>{
-                       navigate(`/store/${item}`)
+                       navigate(`/${item}`)
                        dispatch(HANDLESIGN())
             } }>
                {item}
@@ -177,6 +199,9 @@ const Topnav = () => {
             </Accordion>
              </li>
             </ul>
+
+            }
+          
           </div>
           }
          

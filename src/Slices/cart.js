@@ -17,6 +17,7 @@
 	total:0,
 	packaging:{bool:false,value:1000},
 	recentlyViewed:localrecent,
+	contact:'',
 	alert:'',
 	drop: false,
 	modal:false,
@@ -91,6 +92,14 @@
  		},
 
  		// CART 
+ 		SUCCESSORDERS: (state,action)=>{
+ 			state.orderNo=action.payload
+ 			if (action.payload < 10) {
+ 			state.limit = action.payload +1 * 20000
+ 			}else{
+ 				state.limit= 1000000
+ 			}
+ 		},
  		ORDERTAB:(state,action)=>{
  			state.orderTab= action.payload
  		},
@@ -124,6 +133,9 @@
  		},
  		CLOSEORDERMODAL: (state)=>{
  			state.orderModal=false
+ 		},
+ 		CONTACT:(state,action)=>{
+ 			state.contact= action.payload
  		}
  	},
  });
@@ -147,6 +159,8 @@
  ORDERS,
  OPENORDERMODAL,
 CLOSEORDERMODAL,
+SUCCESSORDERS,
+CONTACT
 }=cartSlice.actions;
 
  export default cartSlice.reducer;

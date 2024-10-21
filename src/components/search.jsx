@@ -46,7 +46,7 @@
              dispatch(SEARCH(searchParam))
              dispatch(HANDLESEARCHCLOSE())
              dispatch(DYNAMICSEARCH())
-             navigate(`/store/allproducts/${encodeURIComponent(searchParam)}`)
+             navigate(`/allproducts/${encodeURIComponent(searchParam)}`)
          }
      }
      return <article className=''>

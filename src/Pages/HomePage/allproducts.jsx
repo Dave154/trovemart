@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import {useNavigate,useParams} from 'react-router-dom'
+import {useParams} from 'react-router-dom'
 import CardList from '../.././components/cardlist.jsx'
 import { useDispatch, useSelector } from 'react-redux';
 import Navigation from '../.././components/appbar.jsx'
@@ -7,7 +7,6 @@ import { SETPAGINATION,SETPRODUCTSDISPLAYEDONSEARCH} from '../.././Slices/produc
 import Breadcrumbs from '../.././components/breadcrumbs.jsx'
 
   const Allproducts = () => {
-    const navigate=useNavigate()
     const {category}=useParams()
     const dispatch = useDispatch();
     const {paginatedProducts, pageNumber, pageList, depth,products} = useSelector((state) => state.products);

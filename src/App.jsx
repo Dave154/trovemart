@@ -1,4 +1,8 @@
 import './App.css'
+import {useEffect} from 'react'
+ import {onAuthStateChanged} from 'firebase/auth'
+ import {getDoc,doc} from 'firebase/firestore'
+  import {auth,db} from '../firebase.js'
 import { Alert } from '@mui/material'
 import Home from './Pages/HomePage'
 import MainCategories from './Pages/HomePage/maincategories.jsx'
@@ -7,24 +11,57 @@ import Root from './Pages/HomePage/root.jsx'
 import Cart from './Pages/Cart'
 import Orders from './Pages/Cart/orders.jsx'
 import CheckOut from './Pages/Cart/checkout.jsx'
-import { Routes, Route } from 'react-router-dom'
+import Login from './Pages/Auth/login.jsx'
+import SignUp from './Pages/Auth/signup.jsx'
+import { Routes, Route ,Navigate} from 'react-router-dom'
+import {useSelector,useDispatch} from 'react-redux'
+import {CURRENTUSER,PHONE} from './Slices/auth.js'
 const App = () => {
+  const dispatch = useDispatch()
+  const {currentUser} = useSelector(state=>state.auth)
+
+
+useEffect(()=>{
+    const getNo = async()=>{
+          try{
+             const res =  await getDoc(doc(db,'users', currentUser.uid))
+             if(res.exists()){
+              console.log(res.data().phone)
+               dispatch(PHONE(res.data().phone))
+             }
+          }catch(err){
+            console.log(err)
+          }
+        } 
+            getNo()
+},[currentUser])
+
+     useEffect(()=>{
+      
+        const unsub=onAuthStateChanged(auth,(user)=>{
+            dispatch(CURRENTUSER(user))
+        })
+            return ()=> unsub()
+    },[])
+
+
  return <>
   <Routes>
-    <Route path='/Store' element={<Home/>}>
+    <Route path='/' element={<Home/>}>
         <Route index element={<Root/>}/>
         <Route path= ':category' element={<MainCategories/>}/>
         <Route path='allproducts' element={<Allproducts/>}>
           <Route path=':query' />
         </Route>
     </Route>
-    <Route path='/cart'>
+
+    <Route path='/cart' element={ !currentUser && <Navigate to='/login'/>}>
        <Route  index element={<Cart/>}/>
        <Route path='checkout' element={<CheckOut/>}/>
        <Route path='Orders' element= {<Orders/>} />
      </Route>
-    <Route path='/signup' element={<h1>Login</h1>}/>
-    <Route path='/login' element={<h1>Signin</h1>} />
+    <Route path='/signup' element={<SignUp/>}/>
+    <Route path='/login' element={<Login/>} />
     <Route path='*' element={<h1>ERROR</h1>}/>
   </Routes>
   </>

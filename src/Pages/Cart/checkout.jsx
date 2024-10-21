@@ -2,7 +2,7 @@
  import Navigation from '../.././components/appbar.jsx'
  import { Container, Button, Backdrop, CircularProgress,Modal } from '@mui/material'
  import { useSelector, useDispatch } from 'react-redux'
- import { PLACEORDER, ORDERTAB, TOGGLEDROP, GETTOTAL, PACKAGING,HANDLEMODAL, OPENBACKDROP, ORDERS } from '../.././Slices/cart.js'
+ import { PLACEORDER, ORDERTAB, TOGGLEDROP, GETTOTAL, PACKAGING,HANDLEMODAL, OPENBACKDROP, ORDERS,CONTACT } from '../.././Slices/cart.js'
  import Lazy from '../.././components/lazyload.jsx'
  import { ArrowDropDown } from '@mui/icons-material'
  import { useNavigate } from 'react-router-dom'
@@ -14,8 +14,9 @@
     const [disabled, setDisabled] = useState(false)
      const navigate = useNavigate()
      const dispatch = useDispatch()
-     const { cartList, amount, subtotal, total, packaging, drop, modal, loading, error, qr ,orders,orderNo,limit} = useSelector((state) => state.cart)
-
+     const {phone} = useSelector(state=> state.auth)
+     console.log(phone)
+     const { cartList, amount, subtotal, total, packaging, drop, modal, loading, error, qr ,orders,orderNo,limit,contact} = useSelector((state) => state.cart)
      useEffect(() => {
          cartList.length < 1 && navigate('/cart')
          dispatch(GETTOTAL())
@@ -55,7 +56,8 @@
 
              const sendtodb= await new Promise((resolve,reject)=>{
              resolve()
-             console.table({ order,orderId,timeStamp})   
+             const contactNo= contact ? contact :phone
+             console.table({ order,orderId,timeStamp,contactNo})   
              })
 
              dispatch(PLACEORDER(qr))
@@ -70,7 +72,7 @@
             <Backdrop open={loading} sx={{zIndex:'1200'}}>
              <div className='bg-white flex flex-col items-center justify-center rounded shadow-inner w-64 h-64 gap-10'>  
              <p className='text-xl'>Order Processing </p>
-              <CircularProgress/> 
+             <div className="loader mt-4"></div>
              </div>
             </Backdrop> 
 
@@ -98,7 +100,7 @@
                     <form action="">
                         <div className='grid gap-2 py-5'>   
                         <label htmlFor="Contact" className='font-bold text-xl'>Contact</label>
-                        <input placeholder='Phone Contact' id='contact' type="text"  className='rounded-xl border-2 p-3'/>
+                        <input placeholder='Phone Contact' id='contact' type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"  placeholder={phone} value={contact} onChange={(e)=>dispatch(CONTACT(e.target.value))} className='rounded-xl border-2 p-3'/>
                         </div>
                     </form>
                     <div className='flex gap-2'>
@@ -120,7 +122,7 @@
                         </div>
                         <div className='flex justify-center flex-col pt-11'>
                         { disabled && 
-                            <p className="text-red-400"> * First Order Must be below ₦ 20,000</p>
+                            <p className="text-red-400"> * Order Limit is ₦ {limit}</p>
                         }
                     <Button variant='contained' onClick={handleOrder} disabled={disabled} sx={{
                         background:'#E51E54',

@@ -7,16 +7,15 @@ import Search from './search.jsx'
 import Categories from './categories.jsx'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts,SETMAINCATEGORIES, SETCATEGORIES, SETPAGINATION, SETDEPTH } from '.././Slices/products.js';
-import { GETTOTAL,REMOVEALERT,ITEMCHANGEALERT } from '.././Slices/cart.js';
+import { GETTOTAL,REMOVEALERT,ITEMCHANGEALERT,SUCCESSORDERS } from '.././Slices/cart.js';
 
 const Navigation = ({ showCat,mt}) => {
 	const navigate = useNavigate()
     const dispatch = useDispatch();
     const { popup } = useSelector((state) => state.appbar);
-    const { amount, cartList, alert} = useSelector((state) => state.cart);
-    const { scrollPrev, scrollNext } = useSelector((state) => state.appbar)
+    const { amount, cartList, alert,orders} = useSelector((state) => state.cart);
     const { products, categories, currentCategory, currentMain, productsDisplayed, currentProduct } = useSelector((state) => state.products);
-    const nestedCategories = {};
+    const nestedCategories ={};
     products?.forEach(item => {
         const levels = item.category.split('/');
 
@@ -38,7 +37,10 @@ const Navigation = ({ showCat,mt}) => {
     useEffect(() => {
         dispatch(fetchProducts('https://products-orcin.vercel.app/product?page=1&limit=3761'));         
     }, []);
-
+//
+     useEffect(()=>{
+        dispatch(SUCCESSORDERS(orders.filter(item=> item.status ==='completed').length))
+    },[orders])
     useEffect(()=>{
      dispatch(GETTOTAL())
      localStorage.setItem('cartList', JSON.stringify(cartList))
@@ -46,7 +48,6 @@ const Navigation = ({ showCat,mt}) => {
             dispatch(REMOVEALERT())
 
         },3000) 
-
             return ()=> clearTimeout(remove)
     },[cartList])
 //
@@ -75,7 +76,7 @@ const Navigation = ({ showCat,mt}) => {
             <Collapse in={alert ? true: false} sx={{
                 position:'fixed',
                 width:'100%',
-            zIndex:'1200'
+                zIndex:'1200'
         }} >
          <Alert
           severity={alert}

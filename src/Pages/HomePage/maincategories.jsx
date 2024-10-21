@@ -12,12 +12,12 @@ import Breadcrumbs from '../.././components/breadcrumbs.jsx'
  	const navigate=useNavigate()
  	const {category}=useParams()
  	const dispatch = useDispatch();
-    const {loading,paginatedProducts } = useSelector((state) => state.products);
+    const {products,loading,paginatedProducts,currentProducts,productsDisplayed } = useSelector((state) => state.products);
     const { popup } = useSelector((state) => state.appbar);
     useEffect(() => {
         dispatch(SETPRODUCTSDISPLAYED(category))
-        dispatch(SETPAGINATION(1))
          dispatch(SETCURRENTCATEGORY('All'))
+        dispatch(SETPAGINATION(1))
     }, [loading,category]);
  	return (
         <div className = "" >   
