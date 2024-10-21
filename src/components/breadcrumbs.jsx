@@ -16,7 +16,7 @@ const Index = () => {
         return  <div key={index} className={`flex items-center  ${index !== depth.length-1 ? ' cursor-pointer hover:underline underline-offset-8 decoration-gray-200 ' : '  text-gray-400 cursor-default'} `}
         onClick={()=>{
             if (index === 0) {
-                  navigate('/store')
+                  navigate('/')
              }else if(index === 1){
                 if(item=== 'AllProducts'){
                 navigate(`/allproducts`)
