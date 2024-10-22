@@ -35,7 +35,7 @@
                  displayName,
                  email,
              });
-             await setDoc(doc(db, "orders", response.user.uid),{});
+             await setDoc(doc(db, "orders", response.user.uid),);
              dispatch(COMPLETE())
              navigate('/login')
              dispatch(LOADING(false))
@@ -105,11 +105,11 @@
 			</label>
 		 	<label htmlFor="">
 			<p>Email </p> 
-				<input type="email" placeholder='Lastname' className='border-x-2 rounded-xl p-3 w-full ' required/>
+				<input type="email" placeholder='Email' className='border-x-2 rounded-xl p-3 w-full ' required/>
 			</label> 
 			<label htmlFor="">
 			<p>Password </p> 
-				<input type="password" placeholder='Lastname' className='border-x-2 rounded-xl p-3 w-full ' required/>
+				<input type="password" placeholder='*************' className='border-x-2 rounded-xl p-3 w-full ' required/>
 			</label>
 			<div className="flex items-center gap-2 ">
 				<input type="checkbox" id='t&c' required/>
