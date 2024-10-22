@@ -35,6 +35,7 @@
                  displayName,
                  email,
              });
+             await setDoc(doc(db, "orders", response.user.uid),{});
              dispatch(COMPLETE())
              navigate('/login')
              dispatch(LOADING(false))

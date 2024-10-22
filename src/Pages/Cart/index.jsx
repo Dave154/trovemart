@@ -18,7 +18,9 @@ const Index = () => {
     return (
         <div>
 		<Navigation mt={20}/> 
-		<Container maxWidth = 'xl'>
+		<Container maxWidth = 'xl' sx={{
+			minHeight:'40rem'
+		}}>
 			<div className="grid gap-1 ">
 			<i className='w-8 h-8 bg-red-50 hover:bg-red-100 rounded-full grid place-content-center' onClick={()=>{
 				navigate(-1)
@@ -117,7 +119,7 @@ const Index = () => {
 					<p className=' text-center'>Browse Our Categories and discover our best deals!</p>
 					<Button variant='contained' sx={{
 						background: '#E51E54',
-						paddingBlock:'1rem'
+						paddingBlock:'.6rem'
 						
 					}} onClick={()=>{
 						navigate('/')
@@ -130,7 +132,7 @@ const Index = () => {
 
 			</article>
 			
-			<div className='bg-white rounded-xl relative p-4 overflow-hidden grid' >
+			<div className={`bg-white rounded-xl relative p-4 overflow-hidden grid ${recentlyViewed.length < 1 && 'hidden'}`} >
 				<h3 className='text-xl'>
 					Recently viewed
 				</h3>

@@ -12,6 +12,21 @@ import makeup from '.././assets/makeup.svg'
 import lotion from '.././assets/lotion.svg'
 import phone from '.././assets/phone.svg'
 import hot from '.././assets/hot.svg'
+import healthcare from '.././assets/healthcare.svg'
+import sex from '.././assets/sex.svg'
+import firstaid from '.././assets/firstaid.svg'
+import cosmetics from '.././assets/cosmetics.svg'
+import eye from '.././assets/eye.svg'
+import tablet from '.././assets/tablet.svg'
+import pill from '.././assets/pill.svg'
+import watch from '.././assets/watch.svg'
+import wellness from '.././assets/wellness.svg'
+import vitamin from '.././assets/vitamin.svg'
+import headset from '.././assets/headset.svg'
+import pen from '.././assets/pen.svg'
+import running from '.././assets/running.svg'
+import fax from '.././assets/fax.svg'
+import accessories from '.././assets/accessories.svg'
 import { useDispatch, useSelector } from 'react-redux';
 import {  SETCURRENTCATEGORY, SETCURRENTPRODUCT } from '.././Slices/products.js';
 import { HANDLECATEGORIESSCROLLNEXT, HANDLECATEGORIESSCROLLPREV } from '.././Slices/appbar.js';
@@ -30,6 +45,20 @@ const Categories = () => {
 		BeautyPersonalCare:makeup,
 		PersonalCare:lotion,
 		MobilePhones:phone,
+		HealthCare:healthcare,
+		SexualWellness:sex,
+		MedicalSuppliesEquipment:firstaid,
+		WellnessRelaxation:wellness,
+		VitaminsDietarySupplements:vitamin,
+		SportsNutrition:pill,
+		Dermocosmetics:cosmetics,
+		VisionCare:eye,
+		Accessories:watch,
+		Tablets:tablet,
+		TelephonesAccessories:headset,
+		TabletAccessories:pen,
+		PhoneFax:fax,
+		SportsFitness:running,
 	}
     const scrollRef = useRef(null)
     const dispatch = useDispatch();

@@ -1,46 +1,47 @@
- import { useEffect,useState } from 'react'
+ import { useEffect, useState } from 'react'
  import Navigation from '../.././components/appbar.jsx'
- import { Container, Button, Backdrop, CircularProgress,Modal } from '@mui/material'
+ import { Container, Button, Backdrop, CircularProgress, Modal } from '@mui/material'
  import { useSelector, useDispatch } from 'react-redux'
- import { PLACEORDER, ORDERTAB, TOGGLEDROP, GETTOTAL, PACKAGING,HANDLEMODAL, OPENBACKDROP, ORDERS,CONTACT } from '../.././Slices/cart.js'
+ import { PLACEORDER, ORDERTAB, TOGGLEDROP, GETTOTAL, PACKAGING, HANDLEMODAL, OPENBACKDROP, ORDERS, CONTACT ,getOrders} from '../.././Slices/cart.js'
  import Lazy from '../.././components/lazyload.jsx'
  import { ArrowDropDown } from '@mui/icons-material'
  import { useNavigate } from 'react-router-dom'
+  import { auth, db } from '../../.././firebase.js'
 
+ import { doc, updateDoc ,arrayUnion} from "firebase/firestore";
  import QRCode from 'qrcode';
  import { v4 as uuidv4 } from 'uuid';
 
  const CheckOut = () => {
-    const [disabled, setDisabled] = useState(false)
+     const [disabled, setDisabled] = useState(false)
      const navigate = useNavigate()
      const dispatch = useDispatch()
-     const {phone} = useSelector(state=> state.auth)
-     console.log(phone)
-     const { cartList, amount, subtotal, total, packaging, drop, modal, loading, error, qr ,orders,orderNo,limit,contact} = useSelector((state) => state.cart)
+     const { phone, currentUser } = useSelector(state => state.auth)
+     const { cartList, amount, subtotal, total, packaging, drop, modal, loading, error, qr, orders, orderNo, limit, contact } = useSelector((state) => state.cart)
      useEffect(() => {
          cartList.length < 1 && navigate('/cart')
          dispatch(GETTOTAL())
      }, [packaging])
 
-     useEffect(()=>{
-            const number=(num)=>{
-                if(num.length>3){
+     useEffect(() => {
+         const number = (num) => {
+             if (num.length > 3) {
 
-                return Number(num.replace(/[.,]/g,'')) 
-                }else{
-                    return num
-                }
-            }
-        if(number(total) > limit ){
-           setDisabled(true)
-        }else{
-            setDisabled(false)
-        }
-            console.log(disabled)
-     },[total])
+                 return Number(num.replace(/[.,]/g, ''))
+             } else {
+                 return num
+             }
+         }
+         if (number(total) > limit) {
+             setDisabled(true)
+         } else {
+             setDisabled(false)
+         }
+         console.log(disabled)
+     }, [total])
 
      const handleOrder = async () => {
-        dispatch(OPENBACKDROP())
+         dispatch(OPENBACKDROP())
          try {
              // generate id
              const orderId = uuidv4()
@@ -52,18 +53,22 @@
                  subtotal: subtotal,
                  orderlist: cartList
              }
-             const qr = await QRCode.toDataURL(JSON.stringify({orderId,timeStamp}))
-
-             const sendtodb= await new Promise((resolve,reject)=>{
-             resolve()
-             const contactNo= contact ? contact :phone
-             console.table({ order,orderId,timeStamp,contactNo})   
+             const qr = await QRCode.toDataURL(JSON.stringify({ uid:currentUser.uid,orderId, timeStamp}))
+             const contactNo = contact ? contact : phone
+             await updateDoc(doc(db, 'orders', currentUser.uid), {
+                 orders: arrayUnion({
+                     order,
+                     orderId,
+                     timeStamp,
+                     contactNo,
+                     status: 'pending',
+                     qr,
+                 })
              })
-
              dispatch(PLACEORDER(qr))
-             dispatch(ORDERS({ ...order, qr, status: 'pending',total ,orderId,timeStamp}))
+             dispatch(getOrders(currentUser.uid))
          } catch (err) {
-             console.error(err)
+             alert(err)
          }
      }
      return (

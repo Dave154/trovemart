@@ -68,12 +68,12 @@
  ]
  const Footer = () => {
      return (
-         <footer className=' '>
+         <footer className=''>
           <div className='bg-gray-800 '>
             <Container>
                  <div className='flex justify-between flex-col md:flex-row md:items-center py-4'>
                   <div className='bg-gray-100 p-2 h-fit w-fit rounded-xl mb-6'>
-                    <Logo footer/>
+                    <Logo show/>
                   </div>
                     <div className=" text-white grid gap-2">
                         <p className=""> New to trovemart?</p>
@@ -118,7 +118,7 @@
             </div>
             <div className=" bg-gray-700 text-gray-200">
              <Container maxWidth='xl'>
-             <span className='bg-gray-100 w-full block h-[1px] '></span>
+             <span className='bg-gray-100 w-full block h-[1px] opacity-10'></span>
                  <div className='flex justify-between py-4'>
                      
                 <p>@2024 trovemart</p>

@@ -25,7 +25,6 @@
              navigate('/')
              dispatch(LOADING(false))
              if (remember) {
-             	console.log(remember)
                 localStorage.setItem('user',JSON.stringify(response.user))
              }
 

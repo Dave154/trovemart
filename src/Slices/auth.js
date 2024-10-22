@@ -1,6 +1,7 @@
    import { createSlice } from '@reduxjs/toolkit';
 
-   const localUser=localStorage.getItem('user')
+   const localUser= JSON.parse(localStorage.getItem('user')) 
+      console.log(localUser)
 
 const authSlice = createSlice({
   name: 'auth',
@@ -21,8 +22,7 @@ const authSlice = createSlice({
 
   	},
   	CURRENTUSER:(state,action)=>{
-  		state.currentUser=action.payload
-  		console.log(action.payload)
+  		   state.currentUser=action.payload      
   	},
   	COMPLETE:(state,action)=>{
   		state.complete= true
