@@ -1,5 +1,5 @@
-import logo from '.././assets/trove.svg'
-import { Skeleton, Divider,Fab ,Badge,Accordion,AccordionSummary, AccordionDetails,Button} from '@mui/material'
+import Logo from './logo.jsx'
+ import { Skeleton, Divider,Fab ,Badge,Accordion,AccordionSummary, AccordionDetails,Button} from '@mui/material'
 import { Menu, AccountCircleRounded ,ShoppingCartOutlined, ShoppingBagOutlined,ArrowDropDown,PersonOutlined} from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux';
 import { HANDLESIGN,HANDLESIGNCLOSE } from '.././Slices/appbar.js';
@@ -49,16 +49,8 @@ const Topnav = () => {
   }, [searchopen]);
 
     return <header>
-    <nav className='flex justify-between  py-3 items-start cursor-pointer'>
-        <div className='flex items-center gap-3' onClick={()=>{
-          // dispatch(SETPRODUCTSDISPLAYED([]))
-          navigate('/')
-        } }>
-          <span className="logo w-10">
-            <img src={logo} alt="logo"/>
-          </span>
-          <h2 className={`text-accent invisible md:visible font-extrabold ${scroll ? 'text-base' : 'text-xl' }`}>trovemart</h2>
-        </div>
+    <nav className='flex justify-between gap-5  py-3 items-start cursor-pointer'>
+       <Logo scroll={scroll}/>
         <div className={`grid place-items-center gap-6 ${scroll && 'hidden'}`}>
           <div className=' gap-2 hidden md:flex '>
           {
@@ -133,8 +125,10 @@ const Topnav = () => {
           <Close condition={signBar} Func={HANDLESIGNCLOSE}>
                      {
             signBar &&  <div className='shadow-md  absolute z-20 -bottom-100 right-0 rounded-md mt-2 bg-white'>
+              <ul className=' w-80 md:w-60'>
+              
             {
-              currentUser ? <div className="h-72 w-64 rounded-xl  overflow-hidden flex flex-col pb-4">
+               currentUser ? <div className="h-72 w-full rounded-xl  overflow-hidden flex flex-col pb-4">
                  <div className="bg-pink-100 relative w-full h-24"> 
                     <div className="rounded-full w-16 h-16 grid place-content-center overflow-hidden border-2 border-double absolute left-1 -bottom-1/2 bg-gray-100">
                       <PersonOutlined fontSize='large' />
@@ -147,14 +141,14 @@ const Topnav = () => {
                    <div className=" flex justify-center mt-auto">
                    <Button variant='contained' sx={{
                     background:'#E52E54',
-                   }} onClick={()=>signOut(auth)}>
+                   }} onClick={()=>{
+                    signOut(auth)
+                    localStorage.removeItem('localUser')
+                   }}>
                      Sign Out
                    </Button>
                    </div>
-              </div>
-              :  <ul className=' w-80 md:w-40'>
-              
-            {
+              </div> :
               list.map((item,index)=>{
                 const {txt,route}=item
                 return <li key={index} className='p-2 hover:bg-gray-200' onClick={()=>{
@@ -200,7 +194,7 @@ const Topnav = () => {
              </li>
             </ul>
 
-            }
+            
           
           </div>
           }

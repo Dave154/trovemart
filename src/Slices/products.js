@@ -3,17 +3,6 @@ import axios from 'axios';
 export const fetchProducts = createAsyncThunk(
     'products/fetchProducts',
     async (url) => {
-       // const response = await new Promise((resolve,reject)=>{
-       //  if(data){
-       //    setTimeout(()=>{
-       //   resolve(data)
-       // },3000)
-       //  }
-       //  else {
-       //    reject(null)
-       //  }
-      // })
-      // return response
         const response = await axios.get(url)
          return response.data.data;
     }
@@ -113,7 +102,7 @@ const productsSlice = createSlice({
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.loading = false;
-                if (error.type === 'AxiosError') {
+                if (action.error.name === 'AxiosError') {
                 state.error = action.error.message;
                 }
             });

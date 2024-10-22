@@ -50,7 +50,7 @@
          }
      }
      return <article className=''>
- <form  className={`flex w-full md:w-1/2  rounded-3xl border-2 border-gray-100 overflow-hidden p-1 mx-auto justify-between ${scroll && ' md:absolute top-2 left-1/2 md:-translate-x-1/2 '}`} 
+ <form  className={`flex w-full md:w-1/2  rounded-3xl border-2 border-gray-100 overflow-hidden p-1 mx-auto justify-between ${scroll && ' md:absolute top-2 left-[47%] md:-translate-x-1/2 '}`} 
  onSubmit={(e)=>{
  	e.preventDefault()
  	handleSubmit(e.target[0].value)
@@ -79,7 +79,7 @@
 	</Fab>
 	</form>
 			<Close Func={()=>HANDLESEARCHCLOSE()} condition={searchopen}>	
- 				<div className={` ${!searchopen && 'hidden'} absolute w-full autocomplete -bottom-100 px-3 left-1/2 -translate-x-1/2  z-10 md:w-1/2 rounded bg-white shadow-xl `}>
+ 				<div className={` ${!searchopen && 'hidden'} absolute w-full autocomplete  -bottom-100 px-3 left-1/2 -translate-x-1/2  z-10 md:w-1/2 rounded-xl bg-white shadow-xl overflow-auto max-h-72`}>
      		 {
      		 	dynamicquery .length > 0 ? 
 				 <div className="">
@@ -96,7 +96,8 @@
      		 </div>:  
      		 <div className={`${recentlySearched.length ===0 && 'hidden'} py-3`}>
 				     		 	 <div className="flex justify-between items-center ">
-				     		 	 	<p> Recently  Searched</p>
+				     		 	 	<p className="text-gray-400"
+				     		 	 	> Recently  Searched</p>
 										<Button variant="text" onClick={()=>dispatch(CLEARHISTORY())}> 
 											<p className="text-accent font-mono text-xs">Clear history</p>
 										</Button>	
@@ -104,8 +105,8 @@
 				     		 	 <ul className="grid gap-3">
 				     		 	 	 {
 				     		 	 	 recentlySearched.map((item,index)=>{
-				     		 	 	 		return <li className='px-3 py-1 hover:bg-gray-100 rounded-2xl cursor-pointer flex items-center gap-2' key={index} onClick={()=>handleSubmit(item)}>
-				     		 	 	 		<i> <AccessTime/></i>
+				     		 	 	 		return <li className='px-3 py-1 hover:bg-gray-100 rounded-2xl cursor-pointer flex items-center gap-2 font-thin' key={index} onClick={()=>handleSubmit(item)}>
+				     		 	 	 		<i > <AccessTime sx={{color:'gray'}} /></i>
 				     		 	 	 		<p>{item}</p>
 				     		 	 	 		</li>
 				     		 	 	 	})

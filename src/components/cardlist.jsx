@@ -32,7 +32,7 @@ import { useDispatch, useSelector } from 'react-redux';
             })}
             </ul>
             {
-                list?.length ===0 ?
+               (!products && list?.length ===0 )?
             <p className='text-gray-500 text-center'>No item matched your search</p>
             :
 
