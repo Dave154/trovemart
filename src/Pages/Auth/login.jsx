@@ -67,7 +67,7 @@
 			</label> 
 			<label htmlFor="">
 			<p>Password </p> 
-				<input type="password" autoComplete='current-password' placeholder='*****************' className='border-x-2 border-y-2 rounded-xl p-3 w-full ' required/>
+				<input type="password" autoComplete='current-password' placeholder='****************' className='border-x-2 border-y-2 rounded-xl p-3 w-full ' required/>
 			</label>
 			<div className="flex items-center gap-2 ">
 				<input type="checkbox" id='t&c' />
