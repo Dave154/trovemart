@@ -25,7 +25,7 @@ const Topnav = () => {
     const navigate= useNavigate()
     const dispatch = useDispatch()
     const { searchopen} = useSelector((state) => state.search);
-    const { amount,orders} = useSelector((state) => state.cart); 
+    const { amount,orders,limit} = useSelector((state) => state.cart); 
     const { signBar,scroll } = useSelector((state) => state.appbar);
     const { currentUser } = useSelector((state) => state.auth);
     const { mainCategories} = useSelector((state) => state.products);
@@ -124,26 +124,31 @@ const Topnav = () => {
           </div>
           <Close condition={signBar} Func={HANDLESIGNCLOSE}>
                      {
-            signBar &&  <div className='shadow-md  absolute z-20 -bottom-100 right-0 rounded-md mt-2 bg-white'>
+            signBar &&  <div className='shadow-md  absolute z-20 -bottom-100 right-0 rounded-xl mt-2 bg-gray-800 text-gray-100'>
               <ul className=' w-80 md:w-60'>
               
             {
-               currentUser ? <div className="h-72 w-full rounded-xl  overflow-hidden flex flex-col pb-4">
-                 <div className="bg-pink-100 relative w-full h-24"> 
-                    <div className="rounded-full w-16 h-16 grid place-content-center overflow-hidden border-2 border-double absolute left-1 -bottom-1/2 bg-gray-100">
-                      <PersonOutlined fontSize='large' />
+               currentUser ? <div className="h-full w-full rounded-xl  overflow-hidden flex flex-col pb-4 gap-6">
+                 <div className="relative w-full h-24"> 
+                    <div className="rounded-full w-32 h-32 grid place-content-center overflow-hidden border-2 border-double absolute left-1/2 -translate-x-1/2 -bottom-1/2 bg-gray-400">
+                      <PersonOutlined fontSize='large'/>
                     </div>
                  </div>
-                 <div className="mt-12 px-4">
-                   <p className="font-bold "
-                   >{currentUser.displayName}</p>
+                 <div className="mt-12 px-4 grid gap-2">
+                   <p className="font-bold ">{currentUser.displayName}</p>
+                   <p>{currentUser.email}</p>
+                   <span className='flex gap-2'>
+                   <p className="font-bold"
+                   >Max Order: </p>
+                   <p>₦ {limit.toLocaleString()}</p> 
+                   </span>
                  </div>
                    <div className=" flex justify-center mt-auto">
                    <Button variant='contained' sx={{
                     background:'#E52E54',
-                   }} onClick={()=>{
+                   }} onClick={()=>{ 
                     signOut(auth)
-                    localStorage.removeItem('localUser')
+                    localStorage.removeItem('user')
                    }}>
                      Sign Out
                    </Button>
@@ -164,7 +169,8 @@ const Topnav = () => {
 
             <Accordion sx={{
               boxShadow:'none',
-              width:'100%'
+              width:'100%',
+              background:'rgba(208,203,200,1)',        
             }}>
               <AccordionSummary
               expandIcon={<ArrowDropDown/>}

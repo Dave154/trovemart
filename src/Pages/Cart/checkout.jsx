@@ -40,7 +40,8 @@
          console.log(disabled)
      }, [total])
 
-     const handleOrder = async () => {
+     const handleOrder = async (e) => {
+            e.preventDefault()
          dispatch(OPENBACKDROP())
          try {
              // generate id
@@ -98,16 +99,20 @@
                     </div>  
                 </div>  
             </Modal>    
-            <Container maxWidth='xl'>
-            <section className='flex flex-col-reverse md:flex-row '>
-                <article className='bg-white h-full basis-3/5 px-4'>
+            <Container maxWidth='xl'
+            sx={{
+                minHeight:'40rem'
+            }}
+            >
+            <section className='flex flex-col-reverse md:flex-row'>
+                <article className='bg-white h-fit basis-3/5 px-4 rounded-xl'>
                     <div>
-                    <form action="">
+                    <form action="" onSubmit={handleOrder}>
                         <div className='grid gap-2 py-5'>   
                         <label htmlFor="Contact" className='font-bold text-xl'>Contact</label>
-                        <input placeholder='Phone Contact' id='contact' type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"  placeholder={phone} value={contact} onChange={(e)=>dispatch(CONTACT(e.target.value))} className='rounded-xl border-2 p-3'/>
+                        <input placeholder='Phone Contact' id='contact' type="tel" pattern="[0-9]{11}"  placeholder={phone} required={!phone && true} value={contact} onChange={(e)=>dispatch(CONTACT(e.target.value))} className='rounded-xl border-2 p-3'/>
                         </div>
-                    </form>
+                   
                     <div className='flex gap-2'>
                         <input type="checkbox" checked={packaging.bool} className='before:bg-white' id='packaging' onChange={(e)=>dispatch(PACKAGING(e.target.checked))}/>
                         <label htmlFor="packaging">Request Packaging for an extra ₦{1000}</label>
@@ -129,7 +134,7 @@
                         { disabled && 
                             <p className="text-red-400"> * Order Limit is ₦ {limit}</p>
                         }
-                    <Button variant='contained' onClick={handleOrder} disabled={disabled} sx={{
+                    <Button variant='contained' type='submit' disabled={disabled} sx={{
                         background:'#E51E54',
                         width:'100%',
                         py:'.8rem'
@@ -138,6 +143,7 @@
                     </Button>
                         </div>
                     </div>
+                     </form>
                     </div>
                 </article>
                 <article className='px-4 basis-2/5'>
@@ -156,7 +162,7 @@
                                                <div className="w-16 rounded-xl overflow-hidden">    
                                                 <Lazy src={image} variant='rectangular' width={65} height={60} />
                                                </div>
-                                                <p className="absolute -top-2 bg-gray-400 w-4 h-4 -right-2 rounded-full grid place-content-center">
+                                                <p className="absolute -top-2 bg-accent w-4 h-4 p-1 -right-2 rounded-full grid place-content-center text-xs text-white">
                                                     {amount}
                                                 </p>
                                             </div>

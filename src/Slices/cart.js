@@ -1,13 +1,13 @@
  import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
- import {getDoc,doc} from 'firebase/firestore'
- import {  db } from '../.././firebase.js'
+ import { getDoc, doc } from 'firebase/firestore'
+ import { db } from '../.././firebase.js'
  const localCart = localStorage.getItem('cartList') ? JSON.parse(localStorage.getItem('cartList')) : [];
  const localrecent = localStorage.getItem('recentlyViewed') ? JSON.parse(localStorage.getItem('recentlyViewed')) : [];
  export const getOrders = createAsyncThunk(
      'cart/getOrders',
      async (uid) => {
-     	   const res= await getDoc(doc(db, "orders", '3zKlPMJq4RW5OXqI62e7Vug52Bz1')) 
-     	   return res.data().orders    
+         const res = await getDoc(doc(db, "orders", uid))
+         return res.data().orders.sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
      }
  )
  const cartSlice = createSlice({
@@ -42,7 +42,7 @@
                      }
                      if (action.payload.type === 'dec') {
                          if (item.amount === 1) {
-                             state.alert = 'error'
+                            state.alert ={bool:true,severity: 'error'}
                          }
                          return { ...item, amount: item.amount - 1 }
                      }
@@ -58,19 +58,19 @@
              state.cartList = []
          },
          REMOVEITEM: (state, action) => {
-             state.alert = 'error'
+             state.alert ={bool:true,severity: 'error'}
              state.cartList = state.cartList.filter(item => item.id !== action.payload)
          },
          ADDTOCART: (state, action) => {
              const cartItem = { ...action.payload, amount: 1 }
              state.cartList = [...state.cartList, cartItem]
-             state.alert = 'success'
+             state.alert ={bool:true,severity: 'success'}
              state.recentlyViewed = [action.payload, ...state.recentlyViewed].filter((item, index, self) => index === self.findIndex((obj) => obj.id === item.id)).slice(0, 20)
              localStorage.setItem('recentlyViewed', JSON.stringify(state.recentlyViewed))
          },
          ITEMCHANGEALERT: (state, action) => {},
          REMOVEALERT: (state) => {
-             state.alert = ''
+             state.alert = {bool:false,severity:state.alert.severity}
          },
          GETTOTAL: (state) => {
              let { amount, subtotal, total } = state.cartList.reduce((cartTotal, item) => {
@@ -147,18 +147,17 @@
              .addCase(getOrders.pending, (state) => {
                  state.loading = true;
                  state.error = false;
-             	console.log('pending')
 
              })
              .addCase(getOrders.fulfilled, (state, action) => {
-             	console.log(action.payload)
+    
                  state.orders = action.payload;
                  state.loading = false;
              })
              .addCase(getOrders.rejected, (state, action) => {
                  state.loading = false;
-                 state.orders=[]
-                 state.error = true;
+                 state.orders = []
+                 state.error = true
 
              });
      }

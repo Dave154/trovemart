@@ -5,12 +5,13 @@
  import { useSelector, useDispatch } from 'react-redux'
  import { useNavigate } from 'react-router-dom'
  import { auth, db } from '../../.././firebase.js'
- import { signInWithEmailAndPassword, } from "firebase/auth";
+ import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider} from "firebase/auth";
  import { doc, setDoc } from "firebase/firestore";
-
  import { LOADING, ERROR } from '../.././Slices/auth.js'
+ import GoogleAuth from './googleAuth.jsx'
 
 
+ const provider = new GoogleAuthProvider();
  const Login = () => {
      const dispatch = useDispatch()
      const navigate = useNavigate()
@@ -25,12 +26,13 @@
              navigate('/')
              dispatch(LOADING(false))
              if (remember) {
-                localStorage.setItem('user',JSON.stringify(response.user))
+                 localStorage.setItem('user', JSON.stringify(response.user))
+             }else{
+             	localStorage.removeItem('user', JSON.stringify(response.user))
              }
 
          } catch (error) {
              dispatch(LOADING(false))
-             console.log(error)
              dispatch(ERROR({ bool: true, message: error.code }))
          }
 
@@ -40,20 +42,7 @@
  		<div className='w-full max-w-md p-6 grid gap-5 rounded-2xl'>
 		<h2 className='font-bold text-2xl'>Login</h2>
 		<div className='w-full flex justify-center'>
-			<Button variant='outlined' sx={{
-				borderColor:'#E51E54',
-				margin:'0 auto',
-				color:'#000'
-			}} > 
-			<div className='flex gap-3'>
-				<span>
-				<img src={google} alt="google"/>
-			</span>
-			<p>
-				Sign in with Google
-			</p>
-			</div>
-			</Button>
+			<GoogleAuth type='in'/>
 		</div>
 		<div className='flex items-center gap-2'>
 		<span className='bg-gray-300 w-full h-[1px]'></span>
@@ -67,7 +56,7 @@
 			</label> 
 			<label htmlFor="">
 			<p>Password </p> 
-				<input type="password" autoComplete='current-password' placeholder='****************' className='border-x-2 border-y-2 rounded-xl p-3 w-full ' required/>
+				<input type="password" autoComplete='current-password' placeholder='**************' className='border-x-2 border-y-2 rounded-xl p-3 w-full ' required/>
 			</label>
 			<div className="flex items-center gap-2 ">
 				<input type="checkbox" id='t&c' />
