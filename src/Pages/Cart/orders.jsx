@@ -9,13 +9,21 @@ import OrderModal from './orderModal.jsx'
  	const dispatch= useDispatch()
  	const {currentUser}=useSelector(state=> state.auth)
  	const {orders,orderTab,orderModal,loading,error}= useSelector(state=> state.cart)
- 	useEffect(()=>{
- 		dispatch(getOrders(currentUser.uid))
- 	},[])
+ 	// useEffect(()=>{
+ 	// 	dispatch(getOrders(currentUser.uid))
+ 	// },[])
+
+ 	const orderList= orders.filter(item=> {
+ 									if (item.status === orderTab.toLowerCase()) {
+ 										return item
+ 									}else if (orderTab ==='All'){
+ 										return item
+ 									}
+ 								})
  	return <div>
  			<Navigation mt={20}/>
- 			<Container maxWidth='xl' sx={{
- 				height:'90vh'
+ 			<Container maxWidth='xl' className='hidden-scroll' sx={{
+ 				minHeight:'90vh',
  			}} >
  				<div className="">
  					<ul className="flex gap-10  ">
@@ -31,7 +39,7 @@ import OrderModal from './orderModal.jsx'
  						}
  					</ul>
  				</div>
- 					<div className=''>
+ 					<div className='overflow-auto'>
  						<OrderModal/>
  						<div className='absolute top-1/2 left-1/2 -translate-x-1/2'>
  						{
@@ -51,18 +59,16 @@ import OrderModal from './orderModal.jsx'
  							</Button>
  							</div>  
  						}	
+ 						{ (orderList.length < 1 && !error && !loading )&&
+								<p className="text-gray-800 font-extralight">Nothing Here</p>
+ 						}
  						</div>
- 						<ul className='grid gap-5 mt-5'>
+ 						<ul className='grid gap-5 mt-5 '>
  							{ 
- 								orders.filter(item=> {
- 									if (item.status === orderTab.toLowerCase()) {
- 										return item
- 									}else if (orderTab ==='All'){
- 										return item
- 									}
- 								}).map(item=>{
+ 								orderList.map(item=>{
  									const {orderId,qr,timeStamp,order,status}=item
- 									return <li className="flex gap-4 justify-between cursor-pointer hover:bg-gray-200 p-2 rounded-2xl" key={orderId} onClick={()=>{
+
+ 									return  <li className="flex gap-4 justify-between cursor-pointer hover:bg-gray-200 p-2 rounded-2xl" key={orderId} onClick={()=>{
  										dispatch(OPENORDERMODAL(orderId))
  									}}>
 
@@ -75,7 +81,7 @@ import OrderModal from './orderModal.jsx'
  										<p>{status}</p>
  									</div>
  									</li> 
- 								})
+ 								}) 
  							}	
 						</ul>			
  					</div>	

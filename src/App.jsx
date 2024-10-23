@@ -17,12 +17,17 @@ import Footer from './components/footer.jsx'
  import { Routes, Route ,Navigate} from 'react-router-dom'
 import {useSelector,useDispatch} from 'react-redux'
 import {CURRENTUSER,PHONE} from './Slices/auth.js'
+import {fetchProducts} from './Slices/products.js'
+import {getOrders} from './Slices/cart.js'
 const App = () => {
   const dispatch = useDispatch()
   const {currentUser} = useSelector(state=>state.auth)
 
-
-
+// useEffect(()=>{
+//   },[])
+    useEffect(() => {
+        dispatch(fetchProducts('https://products-orcin.vercel.app/product?page=1&limit=3761'));         
+    }, []);
 useEffect(()=>{
     const getNo = async()=>{
           try{
@@ -36,6 +41,9 @@ useEffect(()=>{
           }
         } 
             getNo()
+            if(currentUser){
+        dispatch(getOrders(currentUser.uid))
+            }
 },[currentUser])
 
      useEffect(()=>{

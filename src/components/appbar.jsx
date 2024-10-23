@@ -71,13 +71,13 @@ const Navigation = ({ showCat,mt}) => {
         color:'black',
         boxShadow:'4px 2px 5px rgba(200,200,200,.1)'
     }} >
-        <Collapse in={alert ? true: false} sx={{
+        <Collapse in={alert.bool} sx={{
                 position:'fixed',
                 width:'100%',
                 zIndex:'1200'
         }} >
          <Alert
-          severity={alert}
+          severity={alert.severity}
           action={
             <IconButton
               aria-label="close"
@@ -92,7 +92,7 @@ const Navigation = ({ showCat,mt}) => {
           }
           sx={{ mb: 2 }}>
           {
-            alert === 'success' ? 
+            alert.severity === 'success' ? 
          <p>Item has successfuly been added to cart</p>
          :<p> Item has been removed from cart</p>
           }

@@ -4,18 +4,22 @@
  import { Link } from 'react-router-dom'
  import { useNavigate } from 'react-router-dom'
  import { useSelector, useDispatch } from 'react-redux'
- import { LOADING, ERROR ,COMPLETE} from '../.././Slices/auth.js'
+ import { LOADING, ERROR, COMPLETE } from '../.././Slices/auth.js'
  // 
  import { auth, db } from '../../.././firebase.js'
- import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
- // import {ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+ import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
  import { doc, setDoc } from "firebase/firestore";
+ import GoogleAuth from './googleAuth.jsx'
+
+
+
+ const provider = new GoogleAuthProvider();
  const steps = ['Create Account', 'Success']
 
  const SignUp = () => {
      const navigate = useNavigate()
      const dispatch = useDispatch()
-     const {currentUser,complete}=useSelector(state=>state.auth)
+     const { currentUser, complete } = useSelector(state => state.auth)
      const handleSubmit = async (e) => {
          e.preventDefault()
          dispatch(LOADING(true))
@@ -35,13 +39,13 @@
                  displayName,
                  email,
              });
-             await setDoc(doc(db, "orders", response.user.uid),{});
+             await setDoc(doc(db, "orders", response.user.uid), {});
              dispatch(COMPLETE())
              navigate('/login')
              dispatch(LOADING(false))
          } catch (error) {
-         	 dispatch(LOADING(false))
-         	dispatch(ERROR({bool:true,message: error.code}))
+             dispatch(LOADING(false))
+             dispatch(ERROR({ bool: true, message: error.code }))
              console.log(error.code, 'error')
          }
 
@@ -66,22 +70,7 @@
 		</Stepper>
 		<h2 className='font-bold text-2xl'>Get Started</h2>
 
-		<div className='w-full flex justify-center'>
-			<Button variant='outlined' sx={{
-				borderColor:'#E51E54',
-				margin:'0 auto',
-				color:'#000'
-			}} > 
-			<div className='flex gap-3'>
-				<span>
-				<img src={google} alt="google"/>
-			</span>
-			<p>
-				Sign up with Google
-			</p>
-			</div>
-			</Button>
-		</div>
+		<GoogleAuth type='up'/>
 		<div className='flex items-center gap-2'>
 		<span className='bg-gray-300 w-full h-[1px]'></span>
 		<p>or</p>
@@ -105,11 +94,11 @@
 			</label>
 		 	<label htmlFor="">
 			<p>Email </p> 
-				<input type="email" placeholder='Lastname' className='border-x-2 rounded-xl p-3 w-full ' required/>
+				<input type="email" placeholder='Email' className='border-x-2 rounded-xl p-3 w-full ' required/>
 			</label> 
 			<label htmlFor="">
 			<p>Password </p> 
-				<input type="password" placeholder='Lastname' className='border-x-2 rounded-xl p-3 w-full ' required/>
+				<input type="password" placeholder='*************' className='border-x-2 rounded-xl p-3 w-full ' required/>
 			</label>
 			<div className="flex items-center gap-2 ">
 				<input type="checkbox" id='t&c' required/>

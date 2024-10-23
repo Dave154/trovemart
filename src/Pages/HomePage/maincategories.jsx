@@ -5,7 +5,7 @@ import Search from '../.././components/search.jsx'
 import Categories from '../.././components/categories.jsx'
 import CardList from '../.././components/cardlist.jsx'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts, SETPRODUCTSDISPLAYED, SETPAGINATION, SETCURRENTPRODUCT,SETCURRENTCATEGORY } from '../.././Slices/products.js';
+import { SETPRODUCTSDISPLAYED, SETPAGINATION,SETCURRENTCATEGORY } from '../.././Slices/products.js';
 import Breadcrumbs from '../.././components/breadcrumbs.jsx'
  import Navigation from '../.././components/appbar.jsx'
  const MainCategories = () => {

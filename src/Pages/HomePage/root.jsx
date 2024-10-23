@@ -8,7 +8,7 @@ import Categories from '../.././components/categories.jsx'
 import Lazy from '../.././components/lazyload.jsx'
 import Card from '../.././components/card.jsx'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts, SETPRODUCTSDISPLAYED, SETPAGINATION, SETCURRENTPRODUCT } from '../.././Slices/products.js';
+import {SETPRODUCTSDISPLAYED, SETPAGINATION } from '../.././Slices/products.js';
 import Navigation from '../.././components/appbar.jsx'
 const Root = () => {
     const navigate = useNavigate()
@@ -16,11 +16,6 @@ const Root = () => {
     const dispatch = useDispatch();
     const { products, productsDisplayed, paginatedProducts, pageNumber, pageList, depth,mainCategories,loading} = useSelector((state) => state.products);
     const { query} = useSelector((state) => state.search);
-  
-    useEffect(() => {
-        dispatch(fetchProducts());        
-    }, [products]);
-
       useEffect(() => {
         dispatch(SETPRODUCTSDISPLAYED(query))
         dispatch(SETPAGINATION(1))
