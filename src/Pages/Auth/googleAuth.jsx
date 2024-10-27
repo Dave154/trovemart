@@ -23,21 +23,21 @@
              const token = credential.accessToken;
              const user = result.user;
              const checkUser = await getDoc(doc(db,'users', user.uid))
- 			console.log(checkUser)
              if(!checkUser.exists()){
              await setDoc(doc(db, "users", user.uid), {
                  uid: user.uid,
                  displayName: user.displayName,
                  email: user.email,
+                 phone:user.phoneNumber
              });
-             await setDoc(doc(db, "orders", user.uid), {});
+             await setDoc(doc(db, "orders", user.uid), {orders:[]});
              }
              dispatch(LOADING(false))
              navigate('/')
          } catch (error) {
              dispatch(LOADING(false))
              dispatch(ERROR({ bool: true, message: error.code }))
-             console.log(error)
+             console.warn(error)
          }
      }
  	return (

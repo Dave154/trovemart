@@ -1,0 +1,216 @@
+import {ArrowBack,Delete} from "@mui/icons-material"
+import {Button} from '@mui/material'
+import {useParams,useNavigate,useLocation} from 'react-router'
+import {useDispatch,useSelector} from 'react-redux'
+import { SETISEDIT,EDITORDER,SETORDER,GETTOTAL,SETLOADING,SETERROR,SETCONFIRMMODAL} from '.././Slices/cashier.js'
+import {useRef,useState,useEffect} from 'react'
+ import { doc, getDoc,updateDoc } from "firebase/firestore";
+ import { db } from '../.././firebase.js'
+ import  ConfirmModal from './confirmModal.jsx'
+ import {useGlobe} from './context.jsx'
+ const OrderDetails = () => {
+ 	const {updateOrderByOrderId}=useGlobe()
+ 	const dispatch= useDispatch()
+ 	const navigate=useNavigate()
+  const location = useLocation();
+ 	const {isEdit,orderDetails,subtotal,total,packaging,error} =useSelector(state=>state.cashier)
+ 	const {id}=useParams()
+
+    const getOrder=async()=>{
+ 			try{
+ 			 dispatch(SETLOADING(true))
+ 			 dispatch(SETERROR(false))
+ 			 const resp =  await getDoc(doc(db,'globalOrders', id))
+ 			 dispatch(SETORDER(resp.data()))
+ 			 dispatch(SETLOADING(false))
+ 			}catch(err){
+ 				dispatch(SETLOADING(false))
+ 				dispatch(SETERROR(true))
+ 			}
+ 		}
+
+ useEffect(()=>{
+ 		getOrder()
+ },[id])
+  useEffect(() => {
+    return () => {
+      if (location.pathname) {
+       dispatch(SETISEDIT(false))
+      }
+    };
+  }, [location.pathname]);
+
+ useEffect(()=>{
+ 	if(orderDetails.order){
+ 	dispatch(GETTOTAL())
+ 	console.log(orderDetails)
+ 	}
+ },[orderDetails])
+
+
+
+
+  
+ 		const handleEdit=async(e)=>{
+ 			e.preventDefault()
+ 			dispatch(SETISEDIT(false))
+ 			dispatch(SETLOADING(true))
+ 			try{
+ 				await updateDoc(doc(db,'globalOrders',orderDetails.orderId),{
+                     ['order'+'.subtotal']:subtotal,
+                     ['order'+'.total']:total,
+                     ['order'+'.orderlist']:orderDetails.order.orderlist
+
+             })
+			   updateOrderByOrderId( 
+			   orderDetails.userId,orderDetails.orderId ,
+			  {  
+			  	     order:{
+			  	     	subtotal:subtotal,
+			  	     	total:total,
+			  	     	orderlist:orderDetails.order.orderlist
+			  	     }
+                 } 
+			);
+			   dispatch(SETLOADING(false))
+ 			}catch(err){
+			   dispatch(SETLOADING(false))
+			   dispatch(SETERROR(true))
+ 				 
+ 			}
+ 		}
+
+ 	return <div>	
+ 			{
+ 				error ? <div className="absolute top-1/2 left-1/2 grid place-content-center -translate-x-1/2 -translate-y-1/2"
+ 				>	
+ 					<p>	Something went wrong</p>
+ 					<Button variant="contained" sx={{
+ 						bgcolor:'#E51E54'
+ 					}}
+ 					onClick={()=>{
+ 						getOrder()
+ 					}}
+ 					>
+ 						Try again
+ 					</Button>
+ 				</div>	: <div>	
+     <div className="flex justify-between"
+     >
+ 		<div className="flex gap-3">
+ 			<i className='cursor-pointer hover:bg-red-200 rounded h-fit p-2 transition-all' onClick={()=>{
+ 				navigate('/C-A-S-H-I-E-R')
+ 			}}><ArrowBack sx={{
+ 				color:'#E51E54'
+ 			}} /></i>
+ 		 <div className=''>
+ 			<div>
+ 			<p className='text-xs  text-accent'>Order/OrderDetails</p>
+ 			<h3 className='font-bold '>Order #{id}</h3>
+ 			</div>
+ 			<p className="p-1 bg-gray-300 rounded font-semibold w-fit text-xs my-3"
+ 			>Placed on: {orderDetails.timeStamp}</p>
+ 		 </div>			
+ 		</div>
+ 		  <div>
+     	  <p className="font-bold">{orderDetails.userName}</p>
+ 		  	<p>{orderDetails.contactNo}</p>
+ 		  </div>
+     </div>
+ 		<form className='grid gap-4' onSubmit={handleEdit}>
+ 	     
+ 		 <div className="rounded-xl border-2 ">
+ 		    <div className='flex justify-between items-center p-2'>	
+ 		      <p className='font-bold '>Items Ordered</p>
+ 		      <div className='flex gap-4 items-center'>
+ 		 	 <button type='submit' className="border-2 w-fit p-2 rounded-xl bg-accent hover:bg-white hover:text-gray-700 cursor-pointer text-white "
+ 		 	 onClick={handleEdit}
+ 		 	 >
+ 		 	 	Apply Changes
+ 		 	 </button>
+ 		      <p className='border-2 p-1 px-4 rounded-xl cursor-pointer hover:bg-accent hover:text-white transition-all'
+ 		      	onClick={()=>{
+ 		      		dispatch(SETISEDIT(true))
+ 		      	}}
+ 		      > { isEdit ? 'Editing.....' : 'Edit'}</p>
+ 		  </div>
+ 		    </div>
+ 		      <hr/>
+ 		 	 <div className='flex justify-between p-2 text-center font-semibold'>	
+ 		 	 	<p className='basis-[40%] text-left'>Item Name</p>
+ 		 	 	<p className='basis-[20%]'>Amount</p>
+ 		 	 	<p className='basis-[20%]'>Price</p>
+ 		 	 	<p className='basis-[20%]'>Total</p>
+ 		 	 </div>	
+ 		 	 <ul className="">
+ 		 	{
+ 		 		orderDetails.order?.orderlist.map((item,i)=>{
+ 		 			return <li >
+ 		 			  <div className='flex justify-between p-2 text-center items-center'>	
+                        <p className='basis-[40%] text-left'>{item.name}</p>
+                        <input type="number" className='text-center bg-transparent basis-[20%] ' disabled={!isEdit} value={item.amount} onChange={(e)=>dispatch(EDITORDER({id:item.id,amount:e.target.value}))}/>
+                        <p className="text-center bg-transparent basis-[20%]">₦ {Number(item.price).toLocaleString()}</p>
+                        <p  className='text-center bg-transparent basis-[20%] '> ₦ {(item.amount* item.price).toLocaleString()}</p>
+                        {
+                        	isEdit &&
+                        <i className='cursor-pointer hover:bg-red-100 px-4 rounded '>	<Delete sx={{
+                        	color:'#E51E54'
+                        }}/></i>	
+                        }
+ 		 			  </div>
+                        <hr/>
+ 		 			</li>
+ 		 		})
+ 		 	}	
+ 		 	 <div className='flex justify-between font-semibold py-3'>
+ 		 	 	<p className='basis-[60%] text-right'>Subtotal</p>
+ 		 	 	<p className='basis-[20%] text-center'>₦ {subtotal.toLocaleString()}</p>
+ 		 	 </div>
+ 		 	 {
+ 		 	 		packaging && 
+ 		 	 <div className='flex justify-between font-semibold pb-3'>
+ 		 	 	<p className='basis-[60%] text-right'>Packaging</p>
+ 		 	 	<p className='basis-[20%] text-center'>₦ {(1000).toLocaleString()}</p>
+ 		 	 </div>
+ 		 	 }
+ 		 	 <div className='flex justify-between font-semibold'>
+ 		 	 	<p className='basis-[60%] text-right'>Total</p>
+ 		 	 	<p className='basis-[20%] text-center'>₦ {total.toLocaleString()}</p>
+ 		 	 </div>
+ 		 	 </ul>
+ 		 </div>
+ 		  
+ 		</form>
+ 		<ConfirmModal user={orderDetails.userId} id={orderDetails.orderId}/>
+ 		<div className=" my-6 flex gap-6  justify-end">
+ 			<Button variant="outlined"
+ 			sx={{
+ 				borderColor:'#E51E54',
+ 				color:'#E51E54'
+ 			}}
+ 			onClick={()=>{
+ 				dispatch(SETCONFIRMMODAL({type:'Confirm',bool:true})) 
+ 			}}
+ 			>
+ 				Confirm Order
+ 			</Button>
+ 			<Button variant="contained"
+ 			sx={{
+ 				bgcolor:'#E51E54'
+ 			}}
+ 			onClick={()=>{
+ 				dispatch(SETCONFIRMMODAL({type:'Cancel',bool:true})) 
+ 			}}
+ 			>
+ 				Cancel Order
+ 			</Button>
+ 		</div>
+ 		</div>
+
+ 			}
+ 	</div>	
+ 	
+ 	
+ }
+ 
+ export default OrderDetails

@@ -39,6 +39,6 @@ const appbarSlice = createSlice({
   }
 });
 
-// Export actions and reducer
+
 export const { DYNAMICSEARCH,SEARCH,HANDLESIGN,HANDLESIGNCLOSE,HANDLESCROLL,HANDLEPOPUP,HANDLECATEGORIESSCROLLNEXT,HANDLECATEGORIESSCROLLPREV} = appbarSlice.actions;
 export default appbarSlice.reducer;

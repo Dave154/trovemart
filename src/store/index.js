@@ -5,6 +5,7 @@ import searchReducer from '../Slices/search.js';
 import cartReducer from '../Slices/cart.js';
 import profileReducer from '../Slices/profile.js';
 import authReducer from '../Slices/auth.js';
+import cashierReducer from '../Slices/cashier.js';
 export const store = configureStore({
   reducer: {
     products: productsReducer,
@@ -12,6 +13,7 @@ export const store = configureStore({
     search: searchReducer,
     cart:cartReducer,
     profile:profileReducer,
-    auth:authReducer
+    auth:authReducer,
+     cashier:cashierReducer,
   },
 });

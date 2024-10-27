@@ -1,5 +1,7 @@
 import {Outlet} from 'react-router-dom'
 import { Container} from '@mui/material'
+import Footer from '../.././components/footer.jsx'
+
 const HomePage = () => {
    return <>
     <Container maxWidth = 'xl' >
@@ -7,6 +9,7 @@ const HomePage = () => {
          <Outlet/> 
         </div>
          </Container>
+         <Footer/>
          </>
 
 }

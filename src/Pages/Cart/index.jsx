@@ -7,8 +7,10 @@ import logo from '../.././assets/trove.svg'
 import Lazy  from  '../.././components/lazyload.jsx'
 import Card from '../.././components/card.jsx';
 import ScrollBtn from '../.././components/scroll.jsx';
+import Footer from '../.././components/footer.jsx'
 import AmountToggler from '../.././components/amountToggler.jsx'
 import {REMOVEITEM,CLEARCART} from '../.././Slices/cart.js';
+
 import {useRef} from 'react'
 const Index = () => {
 	const scrollRef= useRef(null)
@@ -133,7 +135,7 @@ const Index = () => {
 			</article>
 			
 			<div className={`bg-white rounded-xl relative p-4 overflow-hidden grid ${recentlyViewed.length < 1 && 'hidden'}`} >
-				<h3 className='text-xl'>
+				<h3 className='text-xl font-semibold'>
 					Recently viewed
 				</h3>
 					<ScrollBtn scrollRef={scrollRef}/>
@@ -147,6 +149,7 @@ const Index = () => {
 			</div>
 			</div>
 		</Container> 
+		<Footer/>
 		</div>
     )
 }

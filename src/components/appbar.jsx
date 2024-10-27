@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Outlet } from 'react-router-dom'
-import { Container, Divider, AppBar, Fab, Badge ,Alert,Collapse,IconButton,Modal} from '@mui/material'
+import { Container, Divider, AppBar, Fab, Badge ,Alert,Collapse,IconButton,Modal,Button} from '@mui/material'
 import { Home, ShoppingCartOutlined,Close,Error } from '@mui/icons-material'
 import Topnav from './topnav.jsx'
 import Search from './search.jsx'
@@ -123,7 +123,16 @@ const Navigation = ({ showCat,mt}) => {
           <p>
               {error}
           </p>
+         <Button variant='contained'
+         onClick={()=>dispatch(fetchProducts())}
+          sx={{
+            bgcolor:'#E51E54',
+            my:'1rem'
+         }} >
+             Refresh
+         </Button>
          </div>
+
       
      </Modal>
         <div className='md:hidden' >

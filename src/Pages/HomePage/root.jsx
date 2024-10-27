@@ -10,6 +10,7 @@ import Card from '../.././components/card.jsx'
 import { useDispatch, useSelector } from 'react-redux';
 import {SETPRODUCTSDISPLAYED, SETPAGINATION } from '../.././Slices/products.js';
 import Navigation from '../.././components/appbar.jsx'
+
 const Root = () => {
     const navigate = useNavigate()
     const {category} = useParams()
