@@ -5,7 +5,7 @@
   const cashierSlice = createSlice({
       name: 'cashier',
       initialState: {
-          alert:{bool:true,message:''},
+          alert:{bool:false,message:''},
           currentCashier: null,
           loading: false,
           error: false,
