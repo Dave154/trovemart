@@ -19,7 +19,7 @@
  const SignUp = () => {
      const navigate = useNavigate()
      const dispatch = useDispatch()
-     const { currentUser, complete } = useSelector(state => state.auth)
+     const { complete } = useSelector(state => state.auth)
      const handleSubmit = async (e) => {
          e.preventDefault()
          dispatch(LOADING(true))
@@ -39,14 +39,14 @@
                  displayName,
                  email,
              });
-             await setDoc(doc(db, "orders", response.user.uid), {});
+             await setDoc(doc(db, "orders", response.user.uid), {orders:[]});
              dispatch(COMPLETE())
              navigate('/login')
              dispatch(LOADING(false))
          } catch (error) {
              dispatch(LOADING(false))
              dispatch(ERROR({ bool: true, message: error.code }))
-             console.log(error.code, 'error')
+             console.warn(error.code, 'error')
          }
 
 
@@ -81,20 +81,20 @@
 			<label htmlFor="">
 			 
 				<p className='pb-3'>Firstname  </p>
-				<input type="text" placeholder='Firstname' className='border-x-2 border-y-2 rounded-md p-3 w-full ' required/>
+				<input type="text" placeholder='Firstname' className=' bg-blue-50 border-x-2 border-y-2 rounded-md p-3 w-full ' required/>
 			</label>
 			<label htmlFor="">
 			   <p className='pb-3'>Lastname </p>
-				<input type="text" placeholder='Lastname' className='border-x-2 border-y-2 rounded-md p-3 w-full ' required/>
+				<input type="text" placeholder='Lastname' className=' bg-blue-50 border-x-2 border-y-2 rounded-md p-3 w-full ' required/>
 			</label>
 		 </div>
 		 	<label htmlFor="">
 			<p>Phone Number </p> 
-				<input type="text" placeholder='08...' className='border-x-2 rounded-xl p-3 w-full ' required/>
+				<input type="text" placeholder='08...' className=' bg-blue-50 border-x-2 rounded-xl p-3 w-full ' required/>
 			</label>
 		 	<label htmlFor="">
 			<p>Email </p> 
-				<input type="email" placeholder='Email' className='border-x-2 rounded-xl p-3 w-full ' required/>
+				<input type="email" placeholder='Email' className=' bg-blue-50 border-x-2 rounded-xl p-3 w-full ' required/>
 			</label> 
 			<label htmlFor="">
 			<p>Password </p> 

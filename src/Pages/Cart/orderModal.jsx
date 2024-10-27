@@ -1,6 +1,6 @@
  import {Modal} from '@mui/material'
  import {useState,useEffect} from 'react'
- import {ContentCopy,Autorenew,CheckCircle,ErrorOutline,Close} from '@mui/icons-material'
+ import {ContentCopy,Autorenew,CheckCircle,ErrorOutline,Close,ReportOutlined} from '@mui/icons-material'
  import {useDispatch,useSelector} from 'react-redux'
  import {CLOSEORDERMODAL} from '../.././Slices/cart.js'
  const OrderModal = () => {
@@ -29,7 +29,7 @@
                 	 <div className='w-64'>  
                         <img src={qr} alt=""/>
                     </div> 
-                    <p className={` text-xl ${status==='pending' && 'text-gray-300'}  ${status==='completed' && 'text-green-300'}  ${status==='cancelled' && 'text-red-400'} `}>
+                    <p className={` text-xl ${status==='pending' && 'text-gray-300'}  ${status==='completed' && 'text-green-300'} ${status==='abandoned' && 'text-yellow-500'}  ${status==='cancelled' && 'text-red-400'} `}>
                     {
                         status=== 'pending' && <Autorenew/>
                     }
@@ -38,6 +38,9 @@
                     }
                     {
                         status ==='cancelled' &&<ErrorOutline/>
+                    }
+                    {
+                        status ==='abandoned' &&<ReportOutlined/>
                     }
                     {status}
                     </p>

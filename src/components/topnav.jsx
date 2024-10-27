@@ -124,7 +124,7 @@ const Topnav = () => {
           </div>
           <Close condition={signBar} Func={HANDLESIGNCLOSE}>
                      {
-            signBar &&  <div className='shadow-md  absolute z-20 -bottom-100 right-0 rounded-xl mt-2 bg-gray-800 text-gray-100'>
+            signBar &&  <div className='shadow-md  absolute z-20 -bottom-100 right-0 rounded-xl mt-2 bg-gray-800 text-gray-100 overflow-hidden'>
               <ul className=' w-80 md:w-60'>
               
             {
@@ -156,7 +156,7 @@ const Topnav = () => {
               </div> :
               list.map((item,index)=>{
                 const {txt,route}=item
-                return <li key={index} className='p-2 hover:bg-gray-200' onClick={()=>{
+                return <li key={index} className='p-2 hover:bg-gray-500' onClick={()=>{
                   navigate(route)
                   dispatch(HANDLESIGN())
                 }}>

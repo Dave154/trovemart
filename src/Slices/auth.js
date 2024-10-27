@@ -1,7 +1,7 @@
    import { createSlice } from '@reduxjs/toolkit';
 
-   const localUser= JSON.parse(localStorage.getItem('user')) 
-      console.log(localUser)
+ const localUser= JSON.parse(localStorage.getItem('user')) 
+
 
 const authSlice = createSlice({
   name: 'auth',

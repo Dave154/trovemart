@@ -2,13 +2,13 @@
  import Navigation from '../.././components/appbar.jsx'
  import { Container, Button, Backdrop, CircularProgress, Modal } from '@mui/material'
  import { useSelector, useDispatch } from 'react-redux'
- import { PLACEORDER, ORDERTAB, TOGGLEDROP, GETTOTAL, PACKAGING, HANDLEMODAL, OPENBACKDROP, ORDERS, CONTACT ,getOrders} from '../.././Slices/cart.js'
+ import { PLACEORDER, ORDERTAB, TOGGLEDROP, GETTOTAL, PACKAGING, HANDLEMODAL, OPENBACKDROP, ORDERS,CONTACT } from '../.././Slices/cart.js'
  import Lazy from '../.././components/lazyload.jsx'
  import { ArrowDropDown } from '@mui/icons-material'
  import { useNavigate } from 'react-router-dom'
   import { auth, db } from '../../.././firebase.js'
 
- import { doc, updateDoc ,arrayUnion} from "firebase/firestore";
+ import { doc, updateDoc ,arrayUnion,setDoc} from "firebase/firestore";
  import QRCode from 'qrcode';
  import { v4 as uuidv4 } from 'uuid';
 
@@ -37,7 +37,6 @@
          } else {
              setDisabled(false)
          }
-         console.log(disabled)
      }, [total])
 
      const handleOrder = async (e) => {
@@ -56,6 +55,16 @@
              }
              const qr = await QRCode.toDataURL(JSON.stringify({ uid:currentUser.uid,orderId, timeStamp}))
              const contactNo = contact ? contact : phone
+             await setDoc(doc(db,'globalOrders',orderId),{
+                     userId: currentUser.uid,
+                     orderId,
+                     userName:currentUser.displayName,
+                     order,
+                     timeStamp,
+                     contactNo,
+                     status: 'pending',
+                     qr,
+             })
              await updateDoc(doc(db, 'orders', currentUser.uid), {
                  orders: arrayUnion({
                      order,
@@ -67,9 +76,10 @@
                  })
              })
              dispatch(PLACEORDER(qr))
-             dispatch(getOrders(currentUser.uid))
          } catch (err) {
              alert(err)
+             dispatch(PLACEORDER())
+
          }
      }
      return (

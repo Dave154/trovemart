@@ -1,18 +1,15 @@
 import Navigation from '../.././components/appbar.jsx'
 import {useEffect} from 'react'
  import {Container,Button} from '@mui/material'
- import {MoreVert} from '@mui/icons-material'
+ import {MoreVert,Circle,Done,Error,ReportOutlined} from '@mui/icons-material'
  import {useSelector,useDispatch} from 'react-redux'
- import {ORDERTAB,OPENORDERMODAL,getOrders} from '../.././Slices/cart.js'
+ import {ORDERTAB,OPENORDERMODAL} from '../.././Slices/cart.js'
+import Footer from '../.././components/footer.jsx'
 import OrderModal from './orderModal.jsx'
  const Orders = () => {
  	const dispatch= useDispatch()
  	const {currentUser}=useSelector(state=> state.auth)
  	const {orders,orderTab,orderModal,loading,error}= useSelector(state=> state.cart)
- 	// useEffect(()=>{
- 	// 	dispatch(getOrders(currentUser.uid))
- 	// },[])
-
  	const orderList= orders.filter(item=> {
  									if (item.status === orderTab.toLowerCase()) {
  										return item
@@ -26,9 +23,9 @@ import OrderModal from './orderModal.jsx'
  				minHeight:'90vh',
  			}} >
  				<div className="">
- 					<ul className="flex gap-10  ">
+ 					<ul className="flex gap-10  overflow-auto horizontal-scroll">
  						{
- 							['All','Pending','Completed','Cancelled'].map(item=>{
+ 							['All','Pending','Completed','Cancelled','Abandoned'].map(item=>{
  								return <li key={item} className={`${ item === orderTab ? ' text-gray-700 border-b-2 border-accent' :'text-gray-400 hover:border-b-2' } cursor-pointer`} 
  									onClick={()=>{
  										dispatch(ORDERTAB(item))
@@ -50,7 +47,7 @@ import OrderModal from './orderModal.jsx'
  							error && <div className="grid items-center gap-2">
  							<p className="font-extralight font-mono">Something went wrong</p>	
  							<Button variant="text"
- 							 onClick={()=>dispatch(getOrders())}
+ 							
  							sx={{
  								color:'#E51E54'
  							}}
@@ -78,7 +75,46 @@ import OrderModal from './orderModal.jsx'
  									</div>
  									<div className="">
  									   <p>₦ {order.total}</p>
- 										<p>{status}</p>
+ 										<div className={`${status === 'pending' && 'bg-orange-300'} ${status === 'completed' && 'bg-green-300'} ${status === 'cancelled' && 'bg-red-300'} ${status === 'abandoned' && 'bg-yellow-300'}  flex gap-1 items-center p-1 rounded-xl font-extralight text-gray-800 text-xs`}>
+ 									    <i>
+ 									    	{
+ 									    		status === 'pending' && <Circle sx={{
+ 									    			fontSize:'.8rem',
+ 									    			color:'rgb(255, 172, 28)'
+ 									    			
+ 									    		}}
+ 									    		/>
+ 									    	}
+ 									    	{
+ 									    		status === 'completed' && <Done sx={{
+ 									    			fontSize:'.8rem',
+ 									    			color:'rgb(2, 48, 32)'
+ 									    			
+ 									    		}}
+ 									    		/>
+ 									    	}
+											{
+ 									    		status === 'cancelled' && <Error sx={{
+ 									    			fontSize:'.8rem',
+ 									    			color:'red'
+ 									    			
+ 									    		}}
+ 									    		/>
+ 									    	}
+ 									    	{
+ 									    		status === 'abandoned' && <ReportOutlined sx={{
+ 									    			fontSize:'1rem',
+ 									    			
+ 									    			
+ 									    		}}
+ 									    		/>
+ 									    	}
+
+ 									    </i>
+ 										<p>
+ 										{status}
+ 										</p>
+ 										</div>
  									</div>
  									</li> 
  								}) 
@@ -86,6 +122,7 @@ import OrderModal from './orderModal.jsx'
 						</ul>			
  					</div>	
  			</Container>
+ 			<Footer/>
  		</div>
  }
  

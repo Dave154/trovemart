@@ -3,13 +3,7 @@
  import { db } from '../.././firebase.js'
  const localCart = localStorage.getItem('cartList') ? JSON.parse(localStorage.getItem('cartList')) : [];
  const localrecent = localStorage.getItem('recentlyViewed') ? JSON.parse(localStorage.getItem('recentlyViewed')) : [];
- export const getOrders = createAsyncThunk(
-     'cart/getOrders',
-     async (uid) => {
-         const res = await getDoc(doc(db, "orders", uid))
-         return res.data().orders.sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
-     }
- )
+
  const cartSlice = createSlice({
      name: 'cart',
      initialState: {
@@ -100,7 +94,7 @@
          SUCCESSORDERS: (state, action) => {
              state.orderNo = action.payload
              if (action.payload < 10) {
-                 state.limit = action.payload + 1 * 20000
+                 state.limit =( action.payload + 1) * 20000
              } else {
                  state.limit = 1000000
              }
@@ -130,7 +124,7 @@
              state.loading = false
          },
          ORDERS: (state, action) => {
-             state.orders = [action.payload, ...state.orders]
+             state.orders = action.payload
          },
          OPENORDERMODAL: (state, action) => {
              state.orderModal = state.orders.find(item => item.orderId === action.payload)
@@ -140,27 +134,15 @@
          },
          CONTACT: (state, action) => {
              state.contact = action.payload
-         }
+         },
+         SETLOADING:(state,action)=>{
+           state.loading=action.payload
+         },
+        SETERROR:(state,action)=>{
+            state.error=action.payload
+        },
+
      },
-     extraReducers: (builder) => {
-         builder
-             .addCase(getOrders.pending, (state) => {
-                 state.loading = true;
-                 state.error = false;
-
-             })
-             .addCase(getOrders.fulfilled, (state, action) => {
-    
-                 state.orders = action.payload;
-                 state.loading = false;
-             })
-             .addCase(getOrders.rejected, (state, action) => {
-                 state.loading = false;
-                 state.orders = []
-                 state.error = true
-
-             });
-     }
  });
 
 
@@ -183,7 +165,9 @@
      OPENORDERMODAL,
      CLOSEORDERMODAL,
      SUCCESSORDERS,
-     CONTACT
+     CONTACT,
+     SETLOADING,
+     SETERROR
  } = cartSlice.actions;
 
  export default cartSlice.reducer;

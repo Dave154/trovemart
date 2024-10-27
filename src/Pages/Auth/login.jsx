@@ -1,5 +1,7 @@
  import Auth from './auth.jsx'
  import { Button } from '@mui/material'
+ import { Visibility,VisibilityOff } from '@mui/icons-material'
+ import {useState} from 'react'
  import google from '../.././assets/google.svg'
  import { Link } from 'react-router-dom'
  import { useSelector, useDispatch } from 'react-redux'
@@ -13,6 +15,7 @@
 
  const provider = new GoogleAuthProvider();
  const Login = () => {
+ 	const [visible, setVisible] = useState(false)
      const dispatch = useDispatch()
      const navigate = useNavigate()
      const handleSubmit = async (e) => {
@@ -52,11 +55,17 @@
 		<form action="" className='grid gap-4 auth_form' onSubmit={handleSubmit} >
 		 	<label htmlFor="">
 			<p>Email </p> 
-				<input type="email" placeholder='email' className='border-x-2 border-y-2 rounded-xl p-3 w-full ' required/>
+				<input type="email" placeholder='email' className='bg-blue-100 border-x-2 border-y-2 rounded-xl p-3 w-full ' required/>
 			</label> 
 			<label htmlFor="">
 			<p>Password </p> 
-				<input type="password" autoComplete='current-password' placeholder='**************' className='border-x-2 border-y-2 rounded-xl p-3 w-full ' required/>
+			    <div className='bg-blue-100 border-x-2 border-y-2 rounded-xl p-3 w-full flex justify-between'>
+				<input type={visible ?"text" :"password"} autoComplete='current-password' placeholder='**************' className='w-full bg-transparent ' required/>
+			    	<i onClick={()=>{
+					setVisible(!visible)
+				}}>{ visible ? <Visibility/> :<VisibilityOff/> }</i>
+			    </div>
+				
 			</label>
 			<div className="flex items-center gap-2 ">
 				<input type="checkbox" id='t&c' />

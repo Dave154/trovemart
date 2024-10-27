@@ -2,8 +2,9 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 export const fetchProducts = createAsyncThunk(
     'products/fetchProducts',
-    async (url) => {
-        const response = await axios.get(url)
+    async () => {
+        console.log('called')
+        const response = await axios.get('https://products-orcin.vercel.app/product?page=1&limit=3761')
          return response.data.data;
     }
 );
