@@ -43,13 +43,13 @@ const recover =async()=>{
 							<p>{userName}</p>
 						</div>
 					</div>
-					<div className='flex gap-2 items-center bg-[rgba(0,250,0,0.2)] h-fit rounded-3xl px-2 py-1 text-sm'>
+					<div className={`flex gap-2 items-center  ${orderTab !== 'Active' ? 'bg-yellow-200' :'bg-[rgba(0,250,0,0.2)]'} h-fit rounded-3xl px-2 py-1 text-sm`}>
 
 						<i><Timer sx={{
 							fontSize:'1rem'
 						}}/></i>
 
-						<p>Active</p>
+						<p>{orderTab}</p>
 					</div>
 				</div>
 				<div className='flex justify-between'>

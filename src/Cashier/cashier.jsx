@@ -43,9 +43,15 @@ const Cashier = () => {
     const {getInitials}=useGlobe()
     const [currentdate, setCurrentDate] = useState(updatedTime())
     const { currentTab,orderTab,loading,orders,currentCashier,alert} = useSelector(state => state.cashier)
-    const initials=getInitials(currentCashier.name)
+    const initials=getInitials(currentCashier?.name)
+
    const handleClose=()=>{
   dispatch(SETALERT({bool:false}))
+  }
+  const handleSubmit=async(e)=>{
+    e.preventDefault()
+    console.log(e.target[0].value)
+
   }
     useEffect(() => {
         const refresh = setInterval(() => {
@@ -109,8 +115,8 @@ const Cashier = () => {
           }
           }><QrCodeScanner/></i>
           <i></i>
-          <form action="" className='bg-white flex gap-1 rounded px-2 overflow-hidden'>
-            <input type="text" placeholder="Search a name or userId" className="placeholder:text-sm italic"
+          <form action="" className='bg-white flex gap-1 rounded px-2 overflow-hidden' onSubmit={handleSubmit}>
+            <input type="text" placeholder="Search a name or orderId" className="placeholder:text-sm italic"
             
             />
             <i><Search fontSize="small"

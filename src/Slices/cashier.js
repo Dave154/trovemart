@@ -13,7 +13,7 @@
           confirmModal:{bool:false},
           subtotal:0,
           total:0,
-          packaging:false,
+          packaging:{bool:false,value:''},
           currentTab: 'Orders',
           orderTab: 'Active',
           orders: [],
@@ -21,6 +21,8 @@
           qrdata: [],
           scannerOpen:false,
           isEdit:false,
+          isAdd:false,
+          addtocartquery:'',
           orderDetails:{},
       },
       reducers: {
@@ -56,11 +58,16 @@
             state.qrdata=action.payload
           },
           SETISEDIT:(state,action)=>{
-              console.log(action.payload)
               state.isEdit=action.payload
           },
+           SETISADD:(state,action)=>{
+              state.isAdd=action.payload
+          },
+          SETADDQUERY:(state,action)=>{
+            state.addtocartquery=action.payload
+          },
           SETORDER:(state,action)=>{
-            state.packaging=action.payload.order.packaging.bool
+            state.packaging=action.payload.order.packaging
             state.orderDetails= action.payload
           },
           EDITORDER:(state,action)=>{
@@ -72,6 +79,20 @@
             })
             state.orderDetails= {...state.orderDetails,order:{...state.orderDetails.order,orderlist:newOrders} } 
           },
+          REMOVEITEM:(state,action)=> {
+            const newOrders= state.orderDetails.order.orderlist.filter(item=> item.id !== action.payload)
+            state.orderDetails ={...state.orderDetails,order:{...state.orderDetails.order,orderlist:newOrders} } 
+          },
+          ADDITEM:(state,action)=>{
+            const newItem={amount:1,...action.payload}
+            const tempOrders = [newItem,...state.orderDetails.order.orderlist] 
+            const newOrders =[...new Map(tempOrders.map(item => [item.name, item])).values()]
+             state.orderDetails ={...state.orderDetails,order:{...state.orderDetails.order,orderlist:newOrders} } 
+          },
+          SETPACKAGING:(state,action)=>{
+            state.packaging={...state.packaging,bool:action.payload}
+          },
+
            GETTOTAL: (state) => {
              let { amount, subtotal, total } =state.orderDetails.order.orderlist.reduce((orderTotal, item) => {
                  const { amount, price } = item
@@ -88,7 +109,7 @@
              const checkNum = (num) => {
                  return parseFloat(num.toFixed(2))
              }
-             const extra = state.packaging && 1000;
+             const extra = state.packaging.bool && state.packaging.value;
              subtotal = checkNum(subtotal)
              total = checkNum(subtotal + extra)
              state.amount = amount
@@ -114,10 +135,15 @@
   SETQRDATA,
   SETSCANNEROPEN ,
   SETISEDIT,
+  SETISADD,
+  SETADDQUERY,
   SETORDER,
   EDITORDER,
   GETTOTAL,
   SETCONFIRMMODAL,
-  SETALERT
+  SETALERT,
+  REMOVEITEM,
+  ADDITEM,
+  SETPACKAGING
 } = cashierSlice.actions;
   export default cashierSlice.reducer;

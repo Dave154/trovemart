@@ -1,19 +1,22 @@
-import {ArrowBack,Delete} from "@mui/icons-material"
+import {ArrowBack,Delete,Add,RemoveCircle} from "@mui/icons-material"
 import {Button} from '@mui/material'
 import {useParams,useNavigate,useLocation} from 'react-router'
 import {useDispatch,useSelector} from 'react-redux'
-import { SETISEDIT,EDITORDER,SETORDER,GETTOTAL,SETLOADING,SETERROR,SETCONFIRMMODAL} from '.././Slices/cashier.js'
+import { SETISEDIT,EDITORDER,SETORDER,GETTOTAL,SETLOADING,SETERROR,SETCONFIRMMODAL,REMOVEITEM,SETISADD,SETPACKAGING} from '.././Slices/cashier.js'
 import {useRef,useState,useEffect} from 'react'
  import { doc, getDoc,updateDoc } from "firebase/firestore";
  import { db } from '../.././firebase.js'
  import  ConfirmModal from './confirmModal.jsx'
+ import Addtocart from './Addtocart.jsx'
  import {useGlobe} from './context.jsx'
  const OrderDetails = () => {
  	const {updateOrderByOrderId}=useGlobe()
  	const dispatch= useDispatch()
  	const navigate=useNavigate()
   const location = useLocation();
- 	const {isEdit,orderDetails,subtotal,total,packaging,error} =useSelector(state=>state.cashier)
+ 	const {isEdit,orderDetails,subtotal,total,packaging,error,isAdd} =useSelector(state=>state.cashier)
+   const {products} =useSelector(state=>state.products)
+
  	const {id}=useParams()
 
     const getOrder=async()=>{
@@ -43,9 +46,8 @@ import {useRef,useState,useEffect} from 'react'
  useEffect(()=>{
  	if(orderDetails.order){
  	dispatch(GETTOTAL())
- 	console.log(orderDetails)
  	}
- },[orderDetails])
+ },[orderDetails,packaging])
 
 
 
@@ -59,7 +61,8 @@ import {useRef,useState,useEffect} from 'react'
  				await updateDoc(doc(db,'globalOrders',orderDetails.orderId),{
                      ['order'+'.subtotal']:subtotal,
                      ['order'+'.total']:total,
-                     ['order'+'.orderlist']:orderDetails.order.orderlist
+                     ['order'+'.orderlist']:orderDetails.order.orderlist,
+                     ['order'+'.packaging']:packaging
 
              })
 			   updateOrderByOrderId( 
@@ -68,7 +71,8 @@ import {useRef,useState,useEffect} from 'react'
 			  	     order:{
 			  	     	subtotal:subtotal,
 			  	     	total:total,
-			  	     	orderlist:orderDetails.order.orderlist
+			  	     	orderlist:orderDetails.order.orderlist,
+                  packaging:packaging
 			  	     }
                  } 
 			);
@@ -80,7 +84,8 @@ import {useRef,useState,useEffect} from 'react'
  			}
  		}
 
- 	return <div>	
+ 	return <div>
+       <Addtocart/>	
  			{
  				error ? <div className="absolute top-1/2 left-1/2 grid place-content-center -translate-x-1/2 -translate-y-1/2"
  				>	
@@ -141,6 +146,14 @@ import {useRef,useState,useEffect} from 'react'
  		 	 	<p className='basis-[20%]'>Amount</p>
  		 	 	<p className='basis-[20%]'>Price</p>
  		 	 	<p className='basis-[20%]'>Total</p>
+            {
+               isEdit && 
+            <i className="cursor-pointer hover:bg-red-100 px-4 rounded"
+            onClick={()=>{
+               dispatch(SETISADD(true))
+            }}
+            ><Add/></i>
+            }
  		 	 </div>	
  		 	 <ul className="">
  		 	{
@@ -153,7 +166,13 @@ import {useRef,useState,useEffect} from 'react'
                         <p  className='text-center bg-transparent basis-[20%] '> ₦ {(item.amount* item.price).toLocaleString()}</p>
                         {
                         	isEdit &&
-                        <i className='cursor-pointer hover:bg-red-100 px-4 rounded '>	<Delete sx={{
+                        <i className='cursor-pointer hover:bg-red-100 px-4 rounded ' 
+                        onClick={()=>{
+                           dispatch(REMOVEITEM(item.id))
+                        }}
+                        >	
+
+                        <Delete sx={{
                         	color:'#E51E54'
                         }}/></i>	
                         }
@@ -166,13 +185,31 @@ import {useRef,useState,useEffect} from 'react'
  		 	 	<p className='basis-[60%] text-right'>Subtotal</p>
  		 	 	<p className='basis-[20%] text-center'>₦ {subtotal.toLocaleString()}</p>
  		 	 </div>
- 		 	 {
- 		 	 		packaging && 
- 		 	 <div className='flex justify-between font-semibold pb-3'>
+ 		 	 
+ 		 	 
+ 		 	 <div className={`flex justify-between font-semibold pb-3 ${!packaging.bool && 'line-through text-gray-400'}`}>
  		 	 	<p className='basis-[60%] text-right'>Packaging</p>
- 		 	 	<p className='basis-[20%] text-center'>₦ {(1000).toLocaleString()}</p>
+ 		 	 	<div className='basis-[12.5%] text-center flex justify-between'>
+            <p>
+            ₦{(1000).toLocaleString()}
+            </p>
+            {
+               isEdit &&
+            <i className="cursor-pointer hover:bg-red-100 px-4 rounded "
+            onClick={()=>{
+            dispatch(SETPACKAGING(!packaging.bool))
+         }
+            }
+            ><RemoveCircle 
+            sx={{
+               color:'#E51E54'
+            }}
+            /></i>
+               
+            }
+            </div>
  		 	 </div>
- 		 	 }
+ 		 	 
  		 	 <div className='flex justify-between font-semibold'>
  		 	 	<p className='basis-[60%] text-right'>Total</p>
  		 	 	<p className='basis-[20%] text-center'>₦ {total.toLocaleString()}</p>
