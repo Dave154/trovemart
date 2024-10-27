@@ -7,7 +7,7 @@
     const dispatch=useDispatch()
  	const [copied,setCopied] = useState(false)
     const {orderModal,orders}= useSelector(state=> state.cart)
-    const {orderId,qr,timeStamp,orderItem,status,total}=orderModal
+    const {orderId,qr,timeStamp,orderItem,status,order}=orderModal
  	
 
  	useEffect(()=>{
@@ -47,7 +47,7 @@
                     <div className='w-full py-10'>
                     	<div className='flex justify-between'>
                     		<p className="">Order Amount</p>
-                    		<p className="font-poppins font-semibold ">₦ {total}</p>
+                    		<p className="font-poppins font-semibold ">₦ {order?.total}</p>
                     	</div>
                     	<div className="flex justify-between py-2">
                     		<p>Order Id</p>
