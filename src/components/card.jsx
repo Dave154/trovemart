@@ -15,20 +15,21 @@ import AmountToggler from './amountToggler.jsx';
     })
  	return (
  		<li className={`group bg-white hover:shadow-xl hover:scale-105 transition-all flex flex-col justify-center cursor-pointer rounded-md overflow-hidden w-full h-full ${root ? 'w-full max-w-48 min-w-48 h-80' :'max-w-[18rem]'}   relative`}>
-                 <div className={` w-full h-36 `}>
+                 <div className={` w-full h-42 `}>
                   <Lazy src={image} alt='image' variant="rectangular" height='100%'/>
                  </div>
-                 <div className='p-3 grid gap-2 flex-grow mb-2'>
-                 <p className='line-clamp-2'>{name}</p>
-                 <p className='font-semibold font-poppins' >₦ {Number(price).toLocaleString()}</p>
+                 <div className='px-3 grid gap-2 flex-grow mb-1'>
+                 <p className='line-clamp-2 text-sm'>{name}</p>
+                 <p className='font-semibold font-poppins text-sm' >₦ {Number(price).toLocaleString()}</p>
                  </div>
 
                  <div className=' flex justify-center mt-auto p-2 '> 
                  {
                     tpn ? <AmountToggler value={tpn?.amount} id={id}/> :
                     <div className='md:invisible group-hover:visible flex items-center justify-center gap-5 w-full'>
-                      <Button variant='contained' sx={{
-                        background:'#E51E54'
+                      <Button variant='contained' size='small' sx={{
+                        background:'#E51E54',
+
                      }} 
                         onClick={()=>dispatch(ADDTOCART(item))}>
                          Add to Cart

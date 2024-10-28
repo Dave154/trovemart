@@ -2,7 +2,7 @@ import {ArrowBack,Delete,Add,RemoveCircle} from "@mui/icons-material"
 import {Button} from '@mui/material'
 import {useParams,useNavigate,useLocation} from 'react-router'
 import {useDispatch,useSelector} from 'react-redux'
-import { SETISEDIT,EDITORDER,SETORDER,GETTOTAL,SETLOADING,SETERROR,SETCONFIRMMODAL,REMOVEITEM,SETISADD,SETPACKAGING} from '.././Slices/cashier.js'
+import { SETISEDIT,EDITORDER,SETORDER,GETTOTAL,SETLOADING,SETERROR,SETCONFIRMMODAL,REMOVEITEM,SETISADD,SETPACKAGING,EXCEEDEDLIMIT,SETALERT} from '.././Slices/cashier.js'
 import {useRef,useState,useEffect} from 'react'
  import { doc, getDoc,updateDoc } from "firebase/firestore";
  import { db } from '../.././firebase.js'
@@ -43,35 +43,41 @@ import {useRef,useState,useEffect} from 'react'
   
  		const handleEdit=async(e)=>{
  			e.preventDefault()
- 			dispatch(SETISEDIT(false))
- 			dispatch(SETLOADING(true))
- 			try{
- 				await updateDoc(doc(db,'globalOrders',orderDetails.orderId),{
+         if(orderDetails.limit >= total){
+            dispatch(SETISEDIT(false))
+         dispatch(SETLOADING(true))
+         try{
+            await updateDoc(doc(db,'globalOrders',orderDetails.orderId),{
                      ['order'+'.subtotal']:subtotal,
                      ['order'+'.total']:total,
                      ['order'+'.orderlist']:orderDetails.order.orderlist,
                      ['order'+'.packaging']:packaging
 
              })
-			   updateOrderByOrderId( 
-			   orderDetails.userId,orderDetails.orderId ,
-			  {  
-			  	     order:{
-			  	     	subtotal:subtotal,
-			  	     	total:total,
-			  	     	orderlist:orderDetails.order.orderlist,
+            updateOrderByOrderId( 
+            orderDetails.userId,orderDetails.orderId ,
+           {  
+                 order:{
+                  subtotal:subtotal,
+                  total:total,
+                  orderlist:orderDetails.order.orderlist,
                   packaging:packaging
-			  	     }
+                 }
                  } 
-			);
-			   dispatch(SETLOADING(false))
- 			}catch(err){
-			   dispatch(SETLOADING(false))
-			   dispatch(SETERROR(true))
- 				 
- 			}
- 		}
+         );
+            dispatch(SETLOADING(false))
+            dispatch(SETALERT({bool:true,message:'Changes Saved!'}))
+         }catch(err){
+            dispatch(SETLOADING(false))
+            dispatch(SETERROR(true))
+             
+         }
+         }else{
+             dispatch(SETALERT({bool:true,message:'Order Limit Exceeded!'}))
+         }
 
+ 			
+ 		}
  	return <div>
        <Addtocart/>	
  			{
@@ -106,6 +112,8 @@ import {useRef,useState,useEffect} from 'react'
  			>Placed on: {orderDetails.timeStamp}</p>
          <p className="p-1 bg-gray-300 rounded font-semibold w-fit text-xs my-3 capitalize"
          >Status: {orderDetails.status}</p> 
+         <p className="p-1 bg-gray-300 rounded font-semibold w-fit text-xs my-3 capitalize"
+         >Limit: <span className="font-bold text-gray-700">₦{orderDetails.limit?.toLocaleString()}</span> </p> 
          </div>
  		 </div>			
  		</div>
@@ -122,9 +130,7 @@ import {useRef,useState,useEffect} from 'react'
             {
                orderDetails.status === 'pending' &&
  		      <div className='flex gap-4 items-center'>
- 		 	 <button type='submit' className="border-2 w-fit p-2 rounded-xl bg-accent hover:bg-white hover:text-gray-700 cursor-pointer text-white "
- 		 	 onClick={handleEdit}
- 		 	 >
+ 		 	 <button type='submit' className="border-2 w-fit p-2 rounded-xl bg-accent hover:bg-white hover:text-gray-700 cursor-pointer text-white ">
  		 	 	Apply Changes
  		 	 </button>
  		      <p className='border-2 p-1 px-4 rounded-xl cursor-pointer hover:bg-accent hover:text-white transition-all'

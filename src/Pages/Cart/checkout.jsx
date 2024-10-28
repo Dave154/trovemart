@@ -26,7 +26,6 @@
      useEffect(() => {
          const number = (num) => {
              if (num.length > 3) {
-
                  return Number(num.replace(/[.,]/g, ''))
              } else {
                  return num
@@ -53,7 +52,7 @@
                  subtotal: subtotal,
                  orderlist: cartList
              }
-             const qr = await QRCode.toDataURL(JSON.stringify({ uid:currentUser.uid,orderId, timeStamp}))
+             const qr = await QRCode.toDataURL(JSON.stringify({ uid:currentUser.uid,orderId}))
              const contactNo = contact ? contact : phone
              await setDoc(doc(db,'globalOrders',orderId),{
                      userId: currentUser.uid,
@@ -61,9 +60,12 @@
                      userName:currentUser.displayName,
                      order,
                      timeStamp,
+                     createdAt: new Date(),
                      contactNo,
-                     status: 'abandoned',
+                     status: 'pending',
                      qr,
+                     orderNo,
+                     limit
              })
              await updateDoc(doc(db, 'orders', currentUser.uid), {
                  orders: arrayUnion({
@@ -71,13 +73,17 @@
                      orderId,
                      timeStamp,
                      contactNo,
-                     status: 'abandoned',
+                     status: 'pending',
                      qr,
                  })
              })
+              await updateDoc(doc(db, 'users', currentUser.uid), {
+                 orderNo,
+                 limit
+             })
              dispatch(PLACEORDER(qr))
          } catch (err) {
-             alert(err)
+            alert(err)
              dispatch(PLACEORDER())
 
          }

@@ -1,4 +1,4 @@
- import { PersonOutlined, Timer,Warning } from '@mui/icons-material'
+ import { PersonOutlined, Timer,Warning,DoneAll ,ErrorOutlined} from '@mui/icons-material'
  import { Button } from '@mui/material'
 import {useSelector,useDispatch} from 'react-redux'
 import {useNavigate,useParams} from 'react-router'
@@ -16,7 +16,7 @@ import {useNavigate,useParams} from 'react-router'
   
 
      return (
-     	<div className='bg-white rounded-3xl shadow-sm p-3 max-w-[22rem] grid  overflow-hidden'>
+     	<div className='bg-white rounded-3xl shadow-sm p-3 max-w-[20rem] grid  overflow-hidden'>
 			<div className='grid gap-2 mb-2'>
 				<div className='flex justify-between'>
 					<div className='flex gap-2 items-center'>
@@ -27,15 +27,27 @@ import {useNavigate,useParams} from 'react-router'
 							<p>{userName}</p>
 						</div>
 					</div>
-					<div className={`flex gap-2 items-center  ${orderTab !== 'Active' ? 'bg-yellow-200' :'bg-[rgba(0,250,0,0.2)]'} h-fit rounded-3xl px-2 py-1 text-sm`}>
+					<div className={`flex gap-2 items-center  ${status === 'pending' && 'bg-[rgba(255,204,0,.5)]'}  ${status === 'abandoned' && 'bg-[rgba(255,99,71,.5)]'}  ${status === 'cancelled' && 'bg-[rgba(128,128,128,.5)]'}  ${status === 'completed' && 'bg-[rgb(34,139,34,.5)]'} h-fit rounded-3xl px-2 py-1 text-sm`}>
 
 						
 						<i>
 						{
-						orderTab === 'Active'?
+						status === 'pending' &&
 						<Timer sx={{
 							fontSize:'1rem'
-						}}/> : <Warning sx={{
+						}}/> }
+						{ status === 'abandoned'&&
+						<Warning sx={{
+							fontSize:'1rem'
+						}}/>
+						}
+						{ status === 'completed'&&
+						<DoneAll sx={{
+							fontSize:'1rem'
+						}}/>
+						}
+						{ status === 'cancelled'&&
+						<ErrorOutlined sx={{
 							fontSize:'1rem'
 						}}/>
 						}
@@ -43,7 +55,7 @@ import {useNavigate,useParams} from 'react-router'
 
 						
 
-						<p>{orderTab}</p>
+						<p>{status}</p>
 					</div>
 				</div>
 				<div className='flex justify-between'>
@@ -104,7 +116,7 @@ import {useNavigate,useParams} from 'react-router'
 						See Details
 					</Button>
 					{
-						orderTab !== 'Active' &&
+						status === 'abandoned' &&
 					<Button variant='contained'
 					onClick={()=>recover(orderId,userId)}
 					 sx={{

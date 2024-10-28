@@ -3,7 +3,6 @@ import axios from 'axios';
 export const fetchProducts = createAsyncThunk(
     'products/fetchProducts',
     async () => {
-        console.log('called')
         const response = await axios.get('https://products-orcin.vercel.app/product?page=1&limit=3761')
          return response.data.data;
     }

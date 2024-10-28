@@ -35,7 +35,7 @@ const Root = () => {
             <div className="h-full w-full">
              { mainCategories?.length > 0 ?
                 mainCategories.map((item,index)=>{
-                    return <div className="my-0" key={item}>
+                    return <div className="" key={item}>
                      <div className="bg-red-200 flex rounded-xl p-2 justify-end cursor-pointer">
                         <div className=" flex justify-between w-full " onClick={()=>{
                                 navigate(item)  
@@ -44,7 +44,7 @@ const Root = () => {
                             <p className="justify-self-end cursor-pointer">View all {round(products?.filter(product=>product.category.includes(item)).length)}+ items <KeyboardDoubleArrowRight/> </p>    
                         </div>
                     </div>
-                    <ul className="flex py-4 pl-1 gap-4 overflow-auto horizontal-scroll">
+                    <ul className="flex py-2 pl-1 gap-2 overflow-auto horizontal-scroll">
                     { products?.filter((product,index)=> { 
                             if (product.category.includes(item)) {
                                 return product

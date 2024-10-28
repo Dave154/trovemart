@@ -114,7 +114,7 @@ const Navigation = ({ showCat,mt}) => {
     <Container maxWidth = 'xl'
     sx = { { mt: mt} } >
      <Modal open={ error ? true: false}
-     onClose={()=>dispatch(CLOSEERROR())}
+     // onClose={()=>dispatch(CLOSEERROR())}
      >
          <div className='bg-white grid place-items-center absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 py-16 rounded-2xl w-full max-w-sm'>
               <i>

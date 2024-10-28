@@ -18,12 +18,17 @@
           orderTab: 'Active',
           orders: [],
           abandoned:[],
+          allorders:[],
           qrdata: [],
           scannerOpen:false,
           isEdit:false,
           isAdd:false,
           addtocartquery:'',
           orderDetails:{},
+          pageNumber:0,
+          pageList:0,
+          limitExceeded:false,
+          searchResults:null
       },
       reducers: {
           SETCURRENTCASHIER:(state,action)=>{
@@ -36,6 +41,7 @@
               state.currentTab = action.payload
           },
           SETORDERTAB: (state, action) => {
+             // state.searchResults=null
               state.orderTab = action.payload
           },
           SETORDERS: (state, action) => {
@@ -43,6 +49,9 @@
           },
           SETABANDONED:(state,action)=>{
             state.abandoned=action.payload
+          },
+          SETALLORDERS:(state,action)=>{
+            state.allorders=action.payload
           },
           SETLOADING: (state, action) => {
               state.loading = action.payload
@@ -70,9 +79,12 @@
             state.packaging=action.payload.order.packaging
             state.orderDetails= action.payload
           },
+          EXCEEDEDLIMIT:(state,action)=>{
+            state.limitExceeded=action.payload
+          },
           EDITORDER:(state,action)=>{
             const newOrders=state.orderDetails.order.orderlist.map(item=>{
-              if(action.payload.id === item.id && action.payload.amount >0){
+              if(action.payload.id === item.id && action.payload.amount >0 ){
               return {...item,amount:action.payload.amount}
               }
               return item
@@ -92,7 +104,18 @@
           SETPACKAGING:(state,action)=>{
             state.packaging={...state.packaging,bool:action.payload}
           },
-
+          SETPAGINATION: (state,action)=> {
+          state.pageNumber=action.payload
+        }, 
+        QUERY:(state,action)=>{
+          state.searchResults=state.allorders?.filter(item=>{
+            console.log(item.userName)
+          if(item.userName.toLowerCase().includes(action.payload) || item.orderId === action.payload){
+            return item
+          }
+          }
+          )
+        },
            GETTOTAL: (state) => {
              let { amount, subtotal, total } =state.orderDetails.order.orderlist.reduce((orderTotal, item) => {
                  const { amount, price } = item
@@ -144,6 +167,10 @@
   SETALERT,
   REMOVEITEM,
   ADDITEM,
-  SETPACKAGING
+  SETPACKAGING,
+  EXCEEDEDLIMIT,
+  SETALLORDERS,
+  SETPAGINATION,
+  QUERY
 } = cashierSlice.actions;
   export default cashierSlice.reducer;

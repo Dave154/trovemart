@@ -12,7 +12,7 @@
 
  const provider = new GoogleAuthProvider();
 
- const GooglwAuth = ({type}) => {
+ const GoogleAuth = ({type}) => {
  	const dispatch= useDispatch()
  	const navigate = useNavigate()
  	     const googleAuth = async () => {
@@ -62,4 +62,4 @@
  	)
  }
  
- export default GooglwAuth
+ export default GoogleAuth

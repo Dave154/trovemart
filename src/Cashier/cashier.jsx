@@ -4,7 +4,7 @@ import { useNavigate, Outlet } from 'react-router-dom'
 import { Logout, Dashboard, ManageAccounts, ShoppingCartOutlined ,QrCodeScanner,Loop,Search} from '@mui/icons-material';
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { SETCURRENTTAB,SETORDERTAB ,SETSCANNEROPEN,SETCURRENTCASHIER,SETALERT} from '.././Slices/cashier.js'
+import { SETCURRENTTAB,SETORDERTAB ,SETSCANNEROPEN,SETCURRENTCASHIER,SETALERT,QUERY} from '.././Slices/cashier.js'
  import {useGlobe} from './context.jsx'
 
 const drawerWidth = 230;
@@ -50,7 +50,9 @@ const Cashier = () => {
   }
   const handleSubmit=async(e)=>{
     e.preventDefault()
-    console.log(e.target[0].value)
+    navigate('/C-A-S-H-I-E-R')
+    dispatch(SETORDERTAB('All Orders'))
+    dispatch(QUERY(e.target[0].value))
 
   }
     useEffect(() => {
@@ -95,7 +97,7 @@ const Cashier = () => {
 
         <div className='flex gap-3'>
         	{
-        		['Active','Abandoned'].map(item=>{
+        		['Active','Abandoned','All Orders'].map(item=>{
         			return <p className={`p-2 rounded-2xl cursor-pointer font-bold ${orderTab === item ? 'bg-accent text-gray-100' :'bg-white text-gray-500'}`}
         			onClick={()=>{
                 navigate('/C-A-S-H-I-E-R')
@@ -117,7 +119,6 @@ const Cashier = () => {
           <i></i>
           <form action="" className='bg-white flex gap-1 rounded px-2 overflow-hidden' onSubmit={handleSubmit}>
             <input type="text" placeholder="Search a name or orderId" className="placeholder:text-sm italic"
-            
             />
             <i><Search fontSize="small"
             /></i>
