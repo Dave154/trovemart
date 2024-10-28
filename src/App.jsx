@@ -92,7 +92,7 @@ const App = () => {
     <Route path='/signup' element={<SignUp/>}/>
     <Route path='/login' element={<Login/>} />
 
-    <Route path='/C-A-S-H-I-E-R' element={!currentCashier ? <Cashier/>: <Navigate to='/C-A-S-H-I-E-R/auth'/>}>
+    <Route path='/C-A-S-H-I-E-R' element={currentCashier ? <Cashier/>: <Navigate to='/C-A-S-H-I-E-R/auth'/>}>
       <Route index element={<CashierOrders/>}/>
       <Route path='usermanagement' element={<UserManage/>}/>
       <Route path=':id' element={<OrderDetails/>}/>

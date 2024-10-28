@@ -35,8 +35,8 @@
  				dispatch(SETALERT({bool:true,message:'Order has been Cancelled'}))
  				}
  				dispatch(SETCONFIRMMODAL({bool:false}))
-			   dispatch(SETLOADING(false))
 			   navigate('/C-A-S-H-I-E-R')
+			   dispatch(SETLOADING(false))
  			}catch(err){
  				alert(err)
 			   dispatch(SETLOADING(false))
@@ -53,7 +53,7 @@
  					Are you sure you want to {confirmModal.type} order? 
  				</p>
  				<div className="flex gap-8">
-					<Button loading variant="outlined" 
+					<Button  variant="outlined" 
 					onClick={()=>{
  						dispatch(SETCONFIRMMODAL({bool:false})) 
  					}}>

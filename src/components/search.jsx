@@ -34,7 +34,7 @@
      	   const levels = item.category.split('/');
          levels.map(item=> allcat.push(item))
          //BASED ON NAME
-        const firstNOIndex = item.name.search(/\d/)
+        const firstNOIndex = item.name.search(/\,/)
         	firstNOIndex !== -1 ? allcat.push(item.name.substring(0,firstNOIndex-1)): allcat.push(item.name)
 
            })

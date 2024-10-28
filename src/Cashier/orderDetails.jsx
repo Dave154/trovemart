@@ -10,30 +10,18 @@ import {useRef,useState,useEffect} from 'react'
  import Addtocart from './Addtocart.jsx'
  import {useGlobe} from './context.jsx'
  const OrderDetails = () => {
- 	const {updateOrderByOrderId}=useGlobe()
+ 	const {updateOrderByOrderId,recover,getOrder}=useGlobe()
  	const dispatch= useDispatch()
  	const navigate=useNavigate()
   const location = useLocation();
- 	const {isEdit,orderDetails,subtotal,total,packaging,error,isAdd} =useSelector(state=>state.cashier)
+ 	const {isEdit,orderDetails,subtotal,total,packaging,error,isAdd,loading} =useSelector(state=>state.cashier)
    const {products} =useSelector(state=>state.products)
-
  	const {id}=useParams()
 
-    const getOrder=async()=>{
- 			try{
- 			 dispatch(SETLOADING(true))
- 			 dispatch(SETERROR(false))
- 			 const resp =  await getDoc(doc(db,'globalOrders', id))
- 			 dispatch(SETORDER(resp.data()))
- 			 dispatch(SETLOADING(false))
- 			}catch(err){
- 				dispatch(SETLOADING(false))
- 				dispatch(SETERROR(true))
- 			}
- 		}
+   
 
  useEffect(()=>{
- 		getOrder()
+ 		getOrder(id)
  },[id])
   useEffect(() => {
     return () => {
@@ -113,8 +101,12 @@ import {useRef,useState,useEffect} from 'react'
  			<p className='text-xs  text-accent'>Order/OrderDetails</p>
  			<h3 className='font-bold '>Order #{id}</h3>
  			</div>
+         <div className="flex gap-2">
  			<p className="p-1 bg-gray-300 rounded font-semibold w-fit text-xs my-3"
  			>Placed on: {orderDetails.timeStamp}</p>
+         <p className="p-1 bg-gray-300 rounded font-semibold w-fit text-xs my-3 capitalize"
+         >Status: {orderDetails.status}</p> 
+         </div>
  		 </div>			
  		</div>
  		  <div>
@@ -127,6 +119,8 @@ import {useRef,useState,useEffect} from 'react'
  		 <div className="rounded-xl border-2 ">
  		    <div className='flex justify-between items-center p-2'>	
  		      <p className='font-bold '>Items Ordered</p>
+            {
+               orderDetails.status === 'pending' &&
  		      <div className='flex gap-4 items-center'>
  		 	 <button type='submit' className="border-2 w-fit p-2 rounded-xl bg-accent hover:bg-white hover:text-gray-700 cursor-pointer text-white "
  		 	 onClick={handleEdit}
@@ -139,6 +133,7 @@ import {useRef,useState,useEffect} from 'react'
  		      	}}
  		      > { isEdit ? 'Editing.....' : 'Edit'}</p>
  		  </div>
+            }
  		    </div>
  		      <hr/>
  		 	 <div className='flex justify-between p-2 text-center font-semibold'>	
@@ -158,7 +153,7 @@ import {useRef,useState,useEffect} from 'react'
  		 	 <ul className="">
  		 	{
  		 		orderDetails.order?.orderlist.map((item,i)=>{
- 		 			return <li >
+ 		 			return <li key={i}>
  		 			  <div className='flex justify-between p-2 text-center items-center'>	
                         <p className='basis-[40%] text-left'>{item.name}</p>
                         <input type="number" className='text-center bg-transparent basis-[20%] ' disabled={!isEdit} value={item.amount} onChange={(e)=>dispatch(EDITORDER({id:item.id,amount:e.target.value}))}/>
@@ -220,6 +215,8 @@ import {useRef,useState,useEffect} from 'react'
  		</form>
  		<ConfirmModal user={orderDetails.userId} id={orderDetails.orderId}/>
  		<div className=" my-6 flex gap-6  justify-end">
+       {
+         orderDetails.status ==='pending' &&
  			<Button variant="outlined"
  			sx={{
  				borderColor:'#E51E54',
@@ -231,16 +228,26 @@ import {useRef,useState,useEffect} from 'react'
  			>
  				Confirm Order
  			</Button>
+       }
+       {
+          (orderDetails.status ==='pending' || orderDetails.status ==='abandoned' ) &&
  			<Button variant="contained"
  			sx={{
  				bgcolor:'#E51E54'
  			}}
  			onClick={()=>{
+            if(orderDetails.status ==='abandoned'){
+                recover(orderDetails.orderId,orderDetails.userId)
+            }else{
  				dispatch(SETCONFIRMMODAL({type:'Cancel',bool:true})) 
+            }
  			}}
  			>
- 				Cancel Order
+         {orderDetails.status ==='pending' ?
+ 				'Cancel Order' : 'Recover'
+         }
  			</Button>
+       }
  		</div>
  		</div>
 

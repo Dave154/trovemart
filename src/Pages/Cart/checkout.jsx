@@ -62,7 +62,7 @@
                      order,
                      timeStamp,
                      contactNo,
-                     status: 'pending',
+                     status: 'abandoned',
                      qr,
              })
              await updateDoc(doc(db, 'orders', currentUser.uid), {
@@ -71,7 +71,7 @@
                      orderId,
                      timeStamp,
                      contactNo,
-                     status: 'pending',
+                     status: 'abandoned',
                      qr,
                  })
              })

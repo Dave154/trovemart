@@ -1,4 +1,4 @@
- import { PersonOutlined, Timer } from '@mui/icons-material'
+ import { PersonOutlined, Timer,Warning } from '@mui/icons-material'
  import { Button } from '@mui/material'
 import {useSelector,useDispatch} from 'react-redux'
 import {useNavigate,useParams} from 'react-router'
@@ -7,30 +7,14 @@ import {useNavigate,useParams} from 'react-router'
  import { db } from '../.././firebase.js'
  import {useGlobe} from './context.jsx'
  const Card = ({ item }) => {
- 	const {updateOrderByOrderId,getInitials}=useGlobe()
- 	const dispatch=useDispatch()
+ 	const {updateOrderByOrderId,getInitials,recover}=useGlobe()
  	const navigate= useNavigate()
  	const {orderTab} =useSelector(state=>state.cashier) 
      const { order, status, timeStamp,userName,orderId,userId} = item
 
     const initials=getInitials(userName)
   
-const recover =async()=>{
-	dispatch(SETLOADING(true))
- 			try{	
- 				await updateDoc(doc(db,'globalOrders',orderId),{
-                    status:'pending'
-             })
-			  updateOrderByOrderId(userId,orderId,{ status: 'pending'});
- 				
-			   dispatch(SETLOADING(false))
- 			}catch(err){
- 				alert(err)
-			   dispatch(SETLOADING(false))
-			   dispatch(SETERROR(true))
- 				 
- 			}
-}
+
      return (
      	<div className='bg-white rounded-3xl shadow-sm p-3 max-w-[22rem] grid  overflow-hidden'>
 			<div className='grid gap-2 mb-2'>
@@ -45,9 +29,19 @@ const recover =async()=>{
 					</div>
 					<div className={`flex gap-2 items-center  ${orderTab !== 'Active' ? 'bg-yellow-200' :'bg-[rgba(0,250,0,0.2)]'} h-fit rounded-3xl px-2 py-1 text-sm`}>
 
-						<i><Timer sx={{
+						
+						<i>
+						{
+						orderTab === 'Active'?
+						<Timer sx={{
 							fontSize:'1rem'
-						}}/></i>
+						}}/> : <Warning sx={{
+							fontSize:'1rem'
+						}}/>
+						}
+						</i> 
+
+						
 
 						<p>{orderTab}</p>
 					</div>
@@ -76,7 +70,7 @@ const recover =async()=>{
 						  	<p className='basis-2/6 truncate max-w-24'>
 						  		{item.name}
 						  	</p>
-						  	<p>1</p>
+						  	<p>{item.amount}</p>
 						  	<p>₦ {item.price}</p>
 						  </li>	
 					})
@@ -112,7 +106,7 @@ const recover =async()=>{
 					{
 						orderTab !== 'Active' &&
 					<Button variant='contained'
-					onClick={recover}
+					onClick={()=>recover(orderId,userId)}
 					 sx={{
 						bgcolor:'#E51E54',
 						borderRadius:'10px'
