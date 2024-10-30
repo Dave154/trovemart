@@ -16,9 +16,9 @@ import AmountToggler from './amountToggler.jsx';
  	return (
  		<li className={`group bg-white hover:shadow-xl hover:scale-105 transition-all flex flex-col justify-center cursor-pointer rounded-md overflow-hidden w-full h-full ${root ? 'w-full max-w-48 min-w-48 h-80' :'max-w-[18rem]'}   relative`}>
                  <div className={` w-full h-42 `}>
-                  <Lazy src={image} alt='image' variant="rectangular" height='100%'/>
+                  <Lazy src={image} alt='image' variant="rectangular" height='8rem' width='100%'/>
                  </div>
-                 <div className='px-3 grid gap-2 flex-grow mb-1'>
+                 <div className='px-3 grid gap-2 flex-grow my-1'>
                  <p className='line-clamp-2 text-sm'>{name}</p>
                  <p className='font-semibold font-poppins text-sm' >₦ {Number(price).toLocaleString()}</p>
                  </div>

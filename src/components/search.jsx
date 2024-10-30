@@ -81,7 +81,7 @@
 			<Close Func={()=>HANDLESEARCHCLOSE()} condition={searchopen}>	
  				<div className={` ${!searchopen && 'hidden'} absolute w-full autocomplete  -bottom-100 px-3 left-1/2 -translate-x-1/2  z-10 md:w-1/2 rounded-xl bg-white shadow-xl overflow-auto max-h-72`}>
      		 {
-     		 	dynamicquery .length > 0 ? 
+     		 	dynamicquery.length > 0 ? 
 				 <div className="">
      		 	<ul className="grid gap-3"
      		 	>

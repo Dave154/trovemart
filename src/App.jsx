@@ -19,6 +19,8 @@ import Cashier from './Cashier'
 import CashierOrders from './Cashier/orders.jsx' 
 import CashierAuth from './Cashier/signin.jsx' 
 import UserManage from './Cashier/usermanagement.jsx' 
+import User from './Cashier/user.jsx' 
+
 import OrderDetails from './Cashier/orderDetails.jsx'
 import { Routes, Route ,Navigate} from 'react-router-dom'
 import {useSelector,useDispatch} from 'react-redux'
@@ -94,7 +96,10 @@ const App = () => {
 
     <Route path='/C-A-S-H-I-E-R' element={currentCashier ? <Cashier/>: <Navigate to='/C-A-S-H-I-E-R/auth'/>}>
       <Route index element={<CashierOrders/>}/>
-      <Route path='usermanagement' element={<UserManage/>}/>
+
+      <Route path='usermanagement'  element={<UserManage/>}>  
+      <Route path=':userId' element={<User/>}/>
+      </Route>
       <Route path=':id' element={<OrderDetails/>}/>
     </Route>
     <Route path='/C-A-S-H-I-E-R/auth' element={<CashierAuth/>} />

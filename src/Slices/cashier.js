@@ -14,21 +14,27 @@
           subtotal:0,
           total:0,
           packaging:{bool:false,value:''},
-          currentTab: 'Orders',
+          currentTab: '',
           orderTab: 'Active',
           orders: [],
           abandoned:[],
           allorders:[],
+          paginatedOrders:[],
           qrdata: [],
           scannerOpen:false,
           isEdit:false,
           isAdd:false,
           addtocartquery:'',
           orderDetails:{},
-          pageNumber:0,
+          pageNumber:1,
           pageList:0,
           limitExceeded:false,
-          searchResults:null
+          searchResults:null,
+
+          users:[],
+          user:null,
+          userOrdersOpen:false,
+          userOrders:null
       },
       reducers: {
           SETCURRENTCASHIER:(state,action)=>{
@@ -41,7 +47,8 @@
               state.currentTab = action.payload
           },
           SETORDERTAB: (state, action) => {
-             // state.searchResults=null
+             state.searchResults=null
+             state.pageNumber=1
               state.orderTab = action.payload
           },
           SETORDERS: (state, action) => {
@@ -104,18 +111,30 @@
           SETPACKAGING:(state,action)=>{
             state.packaging={...state.packaging,bool:action.payload}
           },
-          SETPAGINATION: (state,action)=> {
-          state.pageNumber=action.payload
-        }, 
-        QUERY:(state,action)=>{
+           QUERY:(state,action)=>{
           state.searchResults=state.allorders?.filter(item=>{
-            console.log(item.userName)
           if(item.userName.toLowerCase().includes(action.payload) || item.orderId === action.payload){
             return item
           }
           }
           )
         },
+          SETPAGINATION: (state,action)=> {
+          state.pageNumber=action.payload;
+          const currentOrders =state.orderTab === 'Active' 
+          ? state.orders : 
+          state.orderTab ==='Abandoned' ? 
+          state.abandoned :
+          ( state.orderTab ==='All Orders' && state.searchResults) ?
+           state.searchResults : state.allorders
+          state.pageList=Math.ceil(currentOrders.length/50)
+          state.paginatedOrders=currentOrders.filter((item,index)=>{
+                  if(index <= ((state.pageNumber *50)-1) && index >= (state.pageNumber-1 )*50 ){
+                    return item
+                  }
+                });
+             }, 
+       
            GETTOTAL: (state) => {
              let { amount, subtotal, total } =state.orderDetails.order.orderlist.reduce((orderTotal, item) => {
                  const { amount, price } = item
@@ -142,6 +161,23 @@
          },
          SETCONFIRMMODAL:(state,action)=>{
           state.confirmModal=action.payload
+         },
+
+
+         USERS:(state,action)=>{
+          state.users=action.payload
+         },
+         USER:(state,action)=>{
+          console.log(action.payload)
+          const sorted= action.payload ?{...action.payload,orders:action.payload.orders?.sort((a,b)=>new Date(b.timeStamp) - new Date(a.timeStamp))}:null
+          state.user= sorted
+         }, 
+         SETUSERORDERSMODAL:(state,action)=>{
+          state.userOrdersOpen=action.payload
+         },
+         SETUSERORDERS:(state,action)=>{
+          state.userOrdersOpen=true
+          state.userOrders=action.payload
          }
       }
   });
@@ -171,6 +207,12 @@
   EXCEEDEDLIMIT,
   SETALLORDERS,
   SETPAGINATION,
-  QUERY
+  QUERY,
+
+
+  USERS,
+  USER,
+  SETUSERORDERSMODAL,
+  SETUSERORDERS,
 } = cashierSlice.actions;
   export default cashierSlice.reducer;

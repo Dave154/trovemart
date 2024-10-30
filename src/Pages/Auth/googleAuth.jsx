@@ -2,12 +2,12 @@
  import {Button } from '@mui/material'
  import google from '../.././assets/google.svg'
  import { useNavigate } from 'react-router-dom'
- import { useDispatch } from 'react-redux'
+ import { useDispatch,useSelector } from 'react-redux'
  import { LOADING, ERROR } from '../.././Slices/auth.js'
  // 
  import { auth, db } from '../../.././firebase.js'
  import { updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
- import { doc, setDoc ,getDoc} from "firebase/firestore";
+ import { doc, setDoc ,getDoc,serverTimestamp} from "firebase/firestore";
 
 
  const provider = new GoogleAuthProvider();
@@ -15,6 +15,7 @@
  const GoogleAuth = ({type}) => {
  	const dispatch= useDispatch()
  	const navigate = useNavigate()
+    const {orderNo,limit}=useSelector(state=>state.cart)
  	     const googleAuth = async () => {
          dispatch(LOADING(true))
          try {
@@ -28,7 +29,10 @@
                  uid: user.uid,
                  displayName: user.displayName,
                  email: user.email,
-                 phone:user.phoneNumber
+                 phone:user.phoneNumber,
+                 timeStamp:serverTimestamp(),
+                 orderNo,
+                 limit
              });
              await setDoc(doc(db, "orders", user.uid), {orders:[]});
              }

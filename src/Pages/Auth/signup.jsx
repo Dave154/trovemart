@@ -8,7 +8,7 @@
  // 
  import { auth, db } from '../../.././firebase.js'
  import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
- import { doc, setDoc } from "firebase/firestore";
+ import { doc, setDoc,serverTimestamp } from "firebase/firestore";
  import GoogleAuth from './googleAuth.jsx'
 
 
@@ -20,6 +20,8 @@
      const navigate = useNavigate()
      const dispatch = useDispatch()
      const { complete } = useSelector(state => state.auth)
+     const { orderNo,limit } = useSelector(state => state.cart)
+
      const handleSubmit = async (e) => {
          e.preventDefault()
          dispatch(LOADING(true))
@@ -38,6 +40,10 @@
                  phone,
                  displayName,
                  email,
+                 status:'active',
+                 timeStamp:serverTimestamp(),
+                 orderNo,
+                 limit
              });
              await setDoc(doc(db, "orders", response.user.uid), {orders:[]});
              dispatch(COMPLETE())
@@ -81,11 +87,11 @@
 			<label htmlFor="">
 			 
 				<p className='pb-3'>Firstname  </p>
-				<input type="text" placeholder='Firstname' className=' bg-blue-50 border-x-2 border-y-2 rounded-md p-3 w-full ' required/>
+				<input type="text" placeholder='Firstname' className=' bg-blue-50 border-x-2 border-y-2 rounded-md p-3 w-full capitalize ' required/>
 			</label>
 			<label htmlFor="">
 			   <p className='pb-3'>Lastname </p>
-				<input type="text" placeholder='Lastname' className=' bg-blue-50 border-x-2 border-y-2 rounded-md p-3 w-full ' required/>
+				<input type="text" placeholder='Lastname' className=' bg-blue-50 border-x-2 border-y-2 rounded-md p-3 w-full  capitalize' required/>
 			</label>
 		 </div>
 		 	<label htmlFor="">

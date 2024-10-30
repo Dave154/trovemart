@@ -1,10 +1,10 @@
-import { AppBar, Container, Box, Drawer, Toolbar, List, Typography, ListItem, ListItemButton, ListItemIcon, ListItemText,Badge,Snackbar } from '@mui/material'
+import { AppBar,Fab, Container, Box, Drawer, Toolbar, List, Typography, ListItem, ListItemButton, ListItemIcon, ListItemText,Badge,Snackbar } from '@mui/material'
 import logo from '.././assets/trove.svg'
 import { useNavigate, Outlet } from 'react-router-dom'
-import { Logout, Dashboard, ManageAccounts, ShoppingCartOutlined ,QrCodeScanner,Loop,Search} from '@mui/icons-material';
+import { Logout, Dashboard, ManageAccounts, ShoppingCartOutlined ,QrCodeScanner,Loop,Search,SearchRounded} from '@mui/icons-material';
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { SETCURRENTTAB,SETORDERTAB ,SETSCANNEROPEN,SETCURRENTCASHIER,SETALERT,QUERY} from '.././Slices/cashier.js'
+import { SETCURRENTTAB,SETORDERTAB ,SETSCANNEROPEN,SETCURRENTCASHIER,SETALERT,QUERY,SETPAGINATION} from '.././Slices/cashier.js'
  import {useGlobe} from './context.jsx'
 
 const drawerWidth = 230;
@@ -48,12 +48,16 @@ const Cashier = () => {
    const handleClose=()=>{
   dispatch(SETALERT({bool:false}))
   }
-  const handleSubmit=async(e)=>{
+  const handleSubmit=(e)=>{
     e.preventDefault()
     navigate('/C-A-S-H-I-E-R')
     dispatch(SETORDERTAB('All Orders'))
     dispatch(QUERY(e.target[0].value))
+    dispatch(SETPAGINATION(1))
 
+  }
+  const handleUserSubmit=(e)=>{
+      e.preventDefault()
   }
     useEffect(() => {
         const refresh = setInterval(() => {
@@ -90,7 +94,7 @@ const Cashier = () => {
           </div>
         </Toolbar>
         {
-        	currentTab === 'Orders' &&     <Toolbar sx={{
+        	currentTab === 'Orders' ?    <Toolbar sx={{
           display:'flex',
           justifyContent:'space-between'
         }}>	
@@ -102,6 +106,7 @@ const Cashier = () => {
         			onClick={()=>{
                 navigate('/C-A-S-H-I-E-R')
         				dispatch(SETORDERTAB(item))
+                dispatch(SETPAGINATION(1))
         			}}
         			>
         				{item}
@@ -124,6 +129,34 @@ const Cashier = () => {
             /></i>
           </form>
         </div>
+        </Toolbar> :
+        <Toolbar
+        sx={{
+          display:'flex',
+          justifyContent:'center'
+        }}
+        >
+          <form  className='flex w-full max-w-[35rem] rounded-3xl border-2 border-gray-100 overflow-hidden p-1 bg-white justify-between' onSubmit={handleUserSubmit}>
+           <input type="search" className=' w-full p-2'  placeholder='Enter User Name'/>
+
+          <Fab className='w-full'  type='submit' sx={{
+            background:'#E51E54',
+            width:'3.2rem',
+            zIndex:'1',
+            svg:{
+              color:'#fff'
+            },
+             '&:hover': {
+                '& svg': {
+                  color: '#E51E54',
+                },
+              },
+          }}
+           aria-label="Search"
+           size='medium'>
+            <SearchRounded />
+      </Fab>
+  </form>
         </Toolbar>
         }
 
@@ -166,7 +199,6 @@ const Cashier = () => {
             	}else{
             		navigate('usermanagement')
             	}
-            	dispatch(SETCURRENTTAB(text))
             }}
              >
               <ListItemButton>
