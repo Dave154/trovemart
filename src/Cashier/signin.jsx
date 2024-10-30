@@ -36,7 +36,7 @@ import {SETLOADING,SETCURRENTCASHIER,SETERROR} from '.././Slices/cashier.js'
  		  	loading ? <div className="loader"></div> :
  			<form action="" onSubmit={handleSubmit} className={`bg-[rgba(250,11,12,.7)] p-5 rounded-xl shadow-xl ${error && 'shake'}`} >
  				<p className='font-semibold text-center pb-4 text-gray-100'>Enter Cahier Id</p>
- 				<input type="text" className='border-2 rounded-xl px-2' autoFocus placeholder='***************' />
+ 				<input type="text" className='border-2 rounded-xl px-2 text-white' autoFocus placeholder='***************' />
  			</form>	
  		  }
  		  </div>

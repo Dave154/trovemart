@@ -12,8 +12,8 @@ const UserOrderModal = () => {
 		<Modal open={userOrdersOpen}
  			onClose={()=>dispatch(SETUSERORDERSMODAL(false))}
  			>
- 				<div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded shadow-inner p-4 w-full max-w-screen-md shadow-white shadow'>
- 					<i className=" absolute top-2 right-2"
+ 				<div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-3xl shadow-inner p-4 w-full max-w-screen-md shadow-white shadow'>
+ 					<i className=" absolute top-2 right-2 cursor-pointer"
  						onClick={()=>dispatch(SETUSERORDERSMODAL(false))}
  					><Close sx={{
  						color:'#E51E54'

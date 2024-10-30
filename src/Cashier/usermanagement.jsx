@@ -11,7 +11,7 @@
  		const dispatch=useDispatch()
         const {getInitials}=useGlobe()
         const {userId}=useParams()
- 		const {users,currentTab}=useSelector(state=>state.cashier)
+ 		const {users,currentTab,userQuery}=useSelector(state=>state.cashier)
         const navigate=useNavigate()
      const getUsers = async () => {
          try {
@@ -40,13 +40,12 @@
                          <p className='basis-[20%]'>Phone</p>
                          <p className='basis-[20%]'>Status</p>                 
                         </div>
-                        <div className=''>
+                        <div className=' grid gap-2'>
  			{
- 				users.map(item=>{
+ 				users.filter(item=>item.displayName.toLowerCase().includes(userQuery.toLowerCase()) || item.id=== userQuery).slice(0,30).map(item=>{
  					const {id,displayName,email,phone,status} =item
- 					return <div className="text-center bg-white border-b-2 rounded  p-2" key={id}>
- 						<div className="flex justify-between items-center" onClick={()=>{
-                           
+ 					return <div className="text-center border-b-2 rounded-2xl cursor-pointer hover:bg-gray-100 p-2" key={id}>
+ 						<div className="flex justify-between items-center" onClick={()=>{ 
                             navigate(id)
                         }}>
                          <div className='basis-[20%] flex gap-1 items-center'>  
@@ -58,13 +57,13 @@
                          </div>
                          <p className='basis-[40%]'>{email}</p>
                          <p className='basis-[20%]'>{phone}</p>
-                         <p className='basis-[20%]'>{status}</p>                 
+                         <p className='basis-[20%] capitalize font-semibold font-sans'>{status}</p>                 
                         </div>
  					</div>
  				})
  			}
                             
-                        </div>
+            </div>
  		</div>
     }
      </>

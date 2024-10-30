@@ -4,11 +4,13 @@ import { useNavigate, Outlet } from 'react-router-dom'
 import { Logout, Dashboard, ManageAccounts, ShoppingCartOutlined ,QrCodeScanner,Loop,Search,SearchRounded} from '@mui/icons-material';
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { SETCURRENTTAB,SETORDERTAB ,SETSCANNEROPEN,SETCURRENTCASHIER,SETALERT,QUERY,SETPAGINATION,SETORDERS,SETABANDONED,SETALLORDERS,SETLOADING} from '.././Slices/cashier.js'
+import { SETCURRENTTAB,SETORDERTAB ,SETSCANNEROPEN,SETCURRENTCASHIER,SETALERT,QUERY,SETPAGINATION,SETORDERS,SETABANDONED,SETALLORDERS,SETLOADING,USERQUERY} from '.././Slices/cashier.js'
  import {useGlobe} from './context.jsx'
  import { doc, onSnapshot, collection ,getDocs,query,limit,orderBy} from "firebase/firestore";
  import { db } from '../.././firebase.js'
 const drawerWidth = 230;
+const drawerWidthsm = 70;
+
 
 
 const updatedTime = () => {
@@ -59,6 +61,8 @@ const Cashier = () => {
   }
   const handleUserSubmit=(e)=>{
       e.preventDefault()
+      dispatch(USERQUERY(e.target[0].value))
+      navigate('/C-A-S-H-I-E-R/usermanagement')
   }
     useEffect(() => {
         const refresh = setInterval(() => {
@@ -100,7 +104,7 @@ const Cashier = () => {
 />
       <AppBar
         position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`,bgcolor:'#F0F0EC',boxShadow:'none' ,color:'black'}}
+        sx={{ width: {md:`calc(100% - ${drawerWidth}px)`,sm:`calc(100% - ${drawerWidthsm}px)`}, ml:{md: `${drawerWidth}px` ,sm: `${drawerWidthsm}px`},bgcolor:'#F0F0EC',boxShadow:'none' ,color:'black'}}
       >
         <Toolbar >
           <div className="flex justify-between w-full">
@@ -180,10 +184,11 @@ const Cashier = () => {
       </AppBar>
       <Drawer
         sx={{
-          width: drawerWidth,
+          width: {md:drawerWidth ,sm:drawerWidthsm},
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
+          overflowX:'hidden',
+            width: {md:drawerWidth ,sm:drawerWidthsm},
             boxSizing: 'border-box',
           },
         }}

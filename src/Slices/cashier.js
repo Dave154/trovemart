@@ -32,6 +32,7 @@
           searchResults:null,
 
           users:[],
+          userQuery:'',
           user:null,
           userOrdersOpen:false,
           userOrders:null
@@ -167,6 +168,9 @@
          USERS:(state,action)=>{
           state.users=action.payload
          },
+         USERQUERY:(state,action)=>{
+          state.userQuery=action.payload
+         },
          USER:(state,action)=>{
           console.log(action.payload)
           const sorted= action.payload ?{...action.payload,orders:action.payload.orders?.sort((a,b)=>new Date(b.timeStamp) - new Date(a.timeStamp))}:null
@@ -211,6 +215,7 @@
 
 
   USERS,
+  USERQUERY,
   USER,
   SETUSERORDERSMODAL,
   SETUSERORDERS,
