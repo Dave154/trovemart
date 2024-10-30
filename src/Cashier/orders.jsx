@@ -1,9 +1,7 @@
  import { useEffect } from 'react'
  import Card from './card.jsx'
- import { doc, onSnapshot, collection ,getDocs,query,limit,orderBy} from "firebase/firestore";
- import { db } from '../.././firebase.js'
  import { useDispatch, useSelector } from 'react-redux'
- import { SETCURRENTTAB, SETORDERS,SETABANDONED, SETLOADING ,SETALLORDERS,SETPAGINATION,SETORDERTAB} from '.././Slices/cashier.js'
+ import { SETCURRENTTAB,SETPAGINATION} from '.././Slices/cashier.js'
  import Scanner from './scanner.jsx'
  import {Modal,Pagination} from '@mui/material'
 
@@ -11,22 +9,6 @@
      const {orders,scannerOpen,pageList,pageNumber,paginatedOrders,currentTab} = useSelector(state => state.cashier)
      const dispatch = useDispatch()
 
-
-     useEffect(() => {
-         const ordersRef = query(collection(db, 'globalOrders'), orderBy('createdAt','desc'));
-         dispatch(SETLOADING(true))
-         const unsub = onSnapshot(ordersRef, (snapshot) => {
-             const allOrders = [];
-             snapshot.forEach((doc) => {
-                 allOrders.push(doc.data());
-             });
-
-             dispatch(SETORDERS(allOrders.filter(item=>item.status==='pending')))
-             dispatch(SETABANDONED(allOrders.filter(item=> item.status==='abandoned')))
-             dispatch(SETALLORDERS(allOrders))
-             dispatch(SETLOADING(false))
-         });
-     }, [])
      useEffect(()=>{
              dispatch(SETPAGINATION(pageNumber))
          },[orders])

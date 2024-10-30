@@ -117,7 +117,11 @@ import {useRef,useState,useEffect} from 'react'
          </div>
  		 </div>			
  		</div>
- 		  <div>
+ 		  <div className="cursor-pointer"
+         onClick={()=>{
+            navigate(`/C-A-S-H-I-E-R/usermanagement/${orderDetails.userId}`)
+         }}
+        >
      	  <p className="font-bold">{orderDetails.userName}</p>
  		  	<p>{orderDetails.contactNo}</p>
  		  </div>

@@ -4,9 +4,10 @@ import { useNavigate, Outlet } from 'react-router-dom'
 import { Logout, Dashboard, ManageAccounts, ShoppingCartOutlined ,QrCodeScanner,Loop,Search,SearchRounded} from '@mui/icons-material';
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { SETCURRENTTAB,SETORDERTAB ,SETSCANNEROPEN,SETCURRENTCASHIER,SETALERT,QUERY,SETPAGINATION} from '.././Slices/cashier.js'
+import { SETCURRENTTAB,SETORDERTAB ,SETSCANNEROPEN,SETCURRENTCASHIER,SETALERT,QUERY,SETPAGINATION,SETORDERS,SETABANDONED,SETALLORDERS,SETLOADING} from '.././Slices/cashier.js'
  import {useGlobe} from './context.jsx'
-
+ import { doc, onSnapshot, collection ,getDocs,query,limit,orderBy} from "firebase/firestore";
+ import { db } from '../.././firebase.js'
 const drawerWidth = 230;
 
 
@@ -66,6 +67,22 @@ const Cashier = () => {
 
         return () => clearInterval(refresh);
     }, []);
+
+ useEffect(() => {
+         const ordersRef = query(collection(db, 'globalOrders'), orderBy('createdAt','desc'));
+         dispatch(SETLOADING(true))
+         const unsub = onSnapshot(ordersRef, (snapshot) => {
+             const allOrders = [];
+             snapshot.forEach((doc) => {
+                 allOrders.push(doc.data());
+             });
+
+             dispatch(SETORDERS(allOrders.filter(item=>item.status==='pending')))
+             dispatch(SETABANDONED(allOrders.filter(item=> item.status==='abandoned')))
+             dispatch(SETALLORDERS(allOrders))
+             dispatch(SETLOADING(false))
+         });
+     }, [])
 
     return (        
         <Box sx={{ display: 'flex' }} className='hidden'>

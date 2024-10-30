@@ -1,20 +1,33 @@
- import {useEffect} from 'react'
- import {useParams} from 'react-router-dom'
+ import {useEffect,useState} from 'react'
+ import {useParams,useNavigate} from 'react-router-dom'
  import { useDispatch, useSelector } from 'react-redux'
  import { db } from '../.././firebase.js'
- import {Skeleton,Button,Modal} from '@mui/material'
+ import {Skeleton,Button,Modal,Pagination} from '@mui/material'
  import { doc, getDoc } from "firebase/firestore";
 import {ArrowBack,Delete,Add,RemoveCircle} from "@mui/icons-material"
- import {USER,SETUSERORDERSMODAL,SETUSERORDERS} from '.././Slices/cashier.js'
-
+ import {USER,SETUSERORDERS} from '.././Slices/cashier.js'
+import { isAfter, isBefore, parseISO, format, subDays,isValid,parse} from 'date-fns';
+import UserOrderModal from './userOrderModal.jsx'
  const User = () => {
+	const {userId}=useParams()
+	const dispatch=useDispatch()
+	const navigate=useNavigate()
+	const {user,userOrdersOpen}=useSelector(state=>state.cashier)
 
+	 const today = new Date();
+  const sevenDaysAgo = subDays(today, 7);
+ const defaultStart = isValid(sevenDaysAgo) ? format(sevenDaysAgo, 'yyyy-MM-dd') : '';
+  const defaultEnd = isValid(today) ? format(today, 'yyyy-MM-dd') : '';
+
+	const [startDate, setStartDate] = useState(defaultStart);
+	const [endDate, setEndDate] = useState(defaultEnd);
+	const [filteredData, setFilteredData] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
  	const list=[
- 		'name','email','orderNo','limit','phone']
+ 		'name','email','orderNo','limit','phone'
+ 		]
 
- 	const {userId}=useParams()
- 		const dispatch=useDispatch()
- 		const {user,userOrdersOpen}=useSelector(state=>state.cashier)
 
  	 const getUser = async () => {
          try {
@@ -28,22 +41,61 @@ import {ArrowBack,Delete,Add,RemoveCircle} from "@mui/icons-material"
          }
      };
  	useEffect(()=>{
-			 dispatch(USER(null))
-
+		dispatch(USER(null))
  		getUser()
  	},[])
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      const start = parseISO(startDate);
+      const end = parseISO(endDate);
+      const filtered = user?.orders.filter((item) => {
+      	const itemDate =format(parse(item.timeStamp, 'MM/dd/yyyy, h:mm:ss a', new Date()), 'yyyy-MM-dd');
+        return isAfter(itemDate, start) && isBefore(itemDate, end);
+      });
+
+      setFilteredData(filtered);
+      setCurrentPage(1);
+    } else {
+      setFilteredData(user?.orders);
+    }
+  }, [startDate, endDate, user]);
+
+  const paginatedData = filteredData?.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const pageCount = Math.ceil(filteredData?.length / itemsPerPage);
+
+
+  const handleNextPage = () => {
+    if (currentPage * itemsPerPage < filteredData.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+ 
+
  	return (
  		<div className=' grid gap-2'>
  			<article>
  				<div className="flex gap-2 items-center">
- 				<i className='border border-red-100 p-1 rounded'><ArrowBack 
+ 				<i className='border border-red-100 p-1 rounded cursor-pointer hover:bg-red-100 '><ArrowBack 
  					sx={{
  						color:'#E51E54'
  					}}
+ 					onClick={()=>{
+ 						navigate('/C-A-S-H-I-E-R/usermanagement')
+ 					}}
  				/></i>
- 				
  				{
- 				user?
+ 				user ?
  				<div>
  				<h2 className='font-semibold text-xl'>{user.displayName}</h2>
  				<span className='flex items-center gap-1'>
@@ -91,7 +143,7 @@ import {ArrowBack,Delete,Add,RemoveCircle} from "@mui/icons-material"
  							<p className='font-semibold'>Last Order :</p>
  							{
  								user ?
- 							<p>{user.orders[0].timeStamp}</p>:
+ 							<p>{user.orders[0]?.timeStamp}</p>:
  							<Skeleton variant="text" fontSize="large" width={100}
  							
  							/>
@@ -134,17 +186,22 @@ import {ArrowBack,Delete,Add,RemoveCircle} from "@mui/icons-material"
  				</div>
  			</article>
  			<article className='grid gap-2'>
- 			<Modal open={userOrdersOpen}
- 			onClose={()=>dispatch(SETUSERORDERSMODAL(false))}
- 			>
- 				<div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded shadow-inner w-64 h-64 shadow-white shadow'>
- 					test
- 				</div>
- 			</Modal>
+ 			{
+ 				userOrdersOpen &&
+ 			<UserOrderModal/>
+ 			}
+
  				<div className="border rounded ">
+ 				   <div className="flex justify-between px-4 py-2">
  					<h2 className='font-bold p-2'> 
  						Order History
  					</h2>
+ 					<div className='flex items-center gap-4 bg-white p-2 rounded-xl '>
+ 						<input type="date" className='shadow rounded-xl p-2  cursor-pointer'  value={startDate} max={endDate || undefined} onChange={(e) => setStartDate(e.target.value)} />
+     				    <p>-To-</p>
+     				    <input type="date"  className='shadow rounded-xl p-2 cursor-pointer' value={endDate} min={startDate || undefined} onChange={(e) => setEndDate(e.target.value)} />
+ 					</div>
+ 				   </div>
  					<div>
  						<div className='flex justify-between border-b border-t p-4 text-center font-semibold  text-gray-600'>
  							<p className="basis-[30%] text-left">OrderId</p>
@@ -155,37 +212,55 @@ import {ArrowBack,Delete,Add,RemoveCircle} from "@mui/icons-material"
  						</div>
  						<div className="">
  							{
- 								user ?
- 									user.orders.map(item=>{
+ 								filteredData ?
+ 									paginatedData.map(item=>{
  										const {contactNo,order,orderId,timeStamp,status}=item
  										return <div className="flex justify-between p-4 text-center border-b cursor-pointer hover:bg-gray-100" key={orderId}
  										onClick={()=>{
- 											console.log(item)
- 											dispatch(SETUSERORDERS(item))
+ 											dispatch(SETUSERORDERS(order))
  										}}
  										>
  											<p className='basis-[30%] text-left truncate max-w-[80%]'>{orderId}</p>
  											<p className='basis-[20%]'>{contactNo}</p>
  											<p className='basis-[20%]'>{timeStamp}</p>
- 											<p className='basis-[20%]'>₦ {order.total}</p>
- 											<p className='basis-[10%]'>{status}</p>
+ 											<p className='basis-[20%] font-semibold'>₦ {order.total}</p>
+ 											<p className={`basis-[10%] rounded-xl w-fit italic capitalize text-gray-900 ${ status==='pending' && 'bg-yellow-200 '}  ${ status==='completed' && 'bg-green-200 '}  ${ status==='cancelled' && 'bg-red-200 '}`}>{status}</p>
  										</div>
  									})
  								 :
  								 <div>
  								 	{
  								 		Array(10).fill(0).map((item,index)=>{
- 								 			return <div className="flex justify-between p-4" key={index}>
- 								 				<Skeleton variant="text"  fontSize='large' width={250}/>
- 								 				<Skeleton variant="text" fontSize='large'  width={150}/>
- 								 				<Skeleton variant="text"  fontSize='large' width={150}/>
- 								 				<Skeleton variant="text"  fontSize='large' width={100}/>	
- 								 				<Skeleton variant="text"  fontSize='large' width={50}/>
+ 								 			return <div className="flex justify-between p-4 gap-10" key={index}>
+ 								 				<Skeleton variant="text"  fontSize='large' width='30%'/>
+ 								 				<Skeleton variant="text" fontSize='large'  width='20%' />
+ 								 				<Skeleton variant="text"  fontSize='large' width='20%'/>
+ 								 				<Skeleton variant="text"  fontSize='large' width='20%'/>	
+ 								 				<Skeleton variant="text"  fontSize='large' width='10%'/>
  								 			</div>
  								 			
  								 		})
  								 }
  								 </div>
+ 							}
+
+ 							{
+ 								paginatedData?.length > pageCount &&
+ 							<div className="flex justify-end  p-2 ">
+			 					<Pagination count={pageCount} page={currentPage} 
+			 					sx={{
+			 						bgcolor:'white',
+			 						borderRadius:'3rem',
+			 						padding:'.3rem'
+			 					}}
+			 					onChange={(e,value)=>{
+			                    if(value){
+			                   		setCurrentPage(value)
+			                    }else{
+			                        setCurrentPage(1)
+			                    }
+			                  }} />
+ 							</div>
  							}
  						</div>
 
