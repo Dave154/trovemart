@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import {useParams,Outlet} from 'react-router-dom'
+import { useEffect } from 'react'
+import {useParams,useNavigate} from 'react-router-dom'
 import Topnav from '../.././components/topnav.jsx'
 import Search from '../.././components/search.jsx'
 import Categories from '../.././components/categories.jsx'
@@ -11,10 +11,18 @@ import Breadcrumbs from '../.././components/breadcrumbs.jsx'
  const MainCategories = () => {
  	const {category}=useParams()
  	const dispatch = useDispatch();
-    const {products,loading,paginatedProducts,currentProducts,productsDisplayed } = useSelector((state) => state.products);
+    const navigate=useNavigate()
+    const {loading,paginatedProducts,mainCategories } = useSelector((state) => state.products);
     const { popup } = useSelector((state) => state.appbar);
     useEffect(() => {
-        dispatch(SETPRODUCTSDISPLAYED(category))
+        if(mainCategories){
+            if(mainCategories.find(item=>item=== category)){
+            dispatch(SETPRODUCTSDISPLAYED(category))
+
+        }else{
+            navigate('/error')
+        }
+        }
          dispatch(SETCURRENTCATEGORY('All'))
         dispatch(SETPAGINATION(1))
     }, [loading,category]);

@@ -94,7 +94,7 @@ const App = () => {
     <Route path='/signup' element={<SignUp/>}/>
     <Route path='/login' element={<Login/>} />
 
-    <Route path='/C-A-S-H-I-E-R' element={!currentCashier ? <Cashier/>: <Navigate to='/C-A-S-H-I-E-R/auth'/>}>
+    <Route path='/C-A-S-H-I-E-R' element={currentCashier ? <Cashier/>: <Navigate to='/C-A-S-H-I-E-R/auth'/>}>
       <Route index element={<CashierOrders/>}/>
 
       <Route path='usermanagement'  element={<UserManage/>}>  
@@ -103,6 +103,7 @@ const App = () => {
       <Route path=':id' element={<OrderDetails/>}/>
     </Route>
     <Route path='/C-A-S-H-I-E-R/auth' element={<CashierAuth/>} />
+    <Route path='/error' element={<ErrorComponent/>}/>
     <Route path='*' element={<ErrorComponent/>}/>
   </Routes>
   </>
