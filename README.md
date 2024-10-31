@@ -23,9 +23,10 @@ Welcome to **TroveMart**! TroveMart is a customer self-service shopping app crea
 3. [Technologies Used 💻](#technologies-used-💻)
 4. [Installation](#installation)
 5. [Usage Guide](#usage-guide)
-6. [Future Improvements](#future-improvements)
-7. [Contributing](#contributing)
-8. [License](#license)
+6. [Cashier Registration 🧾](#cashier-registration-🧾)
+7. [Future Improvements](#future-improvements)
+8. [Contributing](#contributing)
+9. [License](#license)
 
 ---
 
@@ -114,6 +115,18 @@ To run TroveMart locally, follow these steps:
 5. **Sort Order History by Date Range**: Use date filters to quickly find specific orders.
 6. **Suspend, Recover Accounts, and Manage Abandoned Orders**: Suspend or recover customer accounts if necessary, and manage abandoned orders per policy.
 
+## Cashier Registration 🧾
+
+In **TroveMart**, cashiers need to be registered and assigned a unique ID to manage orders effectively. Here’s how the cashier registration works:
+
+1. **Registration Process**: 
+   - Cashiers must be registered through the admin panel (not yet implemented).
+   - Each cashier will receive a unique ID upon successful registration.
+
+2. **Demo Cashier**:
+   - For demonstration purposes, a test cashier account has been created.
+   - **Test Cashier ID**: `qwer_123_456`
+     
 ## Future Improvements
 
 - **Offline Mode**: Allow offline cart additions for increased convenience.
