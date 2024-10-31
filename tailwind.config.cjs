@@ -18,6 +18,9 @@ module.exports = {
         poppins: ['Poppins', 'sans-serif'],
         custom: ['CustomFont', 'sans-serif'], // For self-hosted font
       },
+       backgroundImage: {
+        'wave': "url('./src/assets/wave.svg')",
+      }
     },
   },
 };

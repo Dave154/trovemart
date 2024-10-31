@@ -6,7 +6,7 @@
  import { doc, getDoc } from "firebase/firestore";
 import {ArrowBack,Delete,Add,RemoveCircle} from "@mui/icons-material"
  import {USER,SETUSERORDERS} from '.././Slices/cashier.js'
-import { isAfter, isBefore, parseISO, format, subDays,isValid,parse} from 'date-fns';
+import { isAfter, isBefore, parseISO, format, subDays,isValid,parse,isSameDay} from 'date-fns';
 import UserOrderModal from './userOrderModal.jsx'
  const User = () => {
 	const {userId}=useParams()
@@ -34,7 +34,6 @@ import UserOrderModal from './userOrderModal.jsx'
     		 const res = await getDoc(doc(db, "users", userId))
     		 const orders= await getDoc(doc(db, "orders", userId))
     		 const merged= Object.assign({}, res.data(), orders.data());
-    		 console.log(merged)
 			 dispatch(USER(merged))
          } catch (err) {
              console.error(err);
@@ -49,11 +48,10 @@ import UserOrderModal from './userOrderModal.jsx'
     if (startDate && endDate) {
       const start = parseISO(startDate);
       const end = parseISO(endDate);
-      const filtered = user?.orders.filter((item) => {
-      	const itemDate =format(parse(item.timeStamp, 'MM/dd/yyyy, h:mm:ss a', new Date()), 'yyyy-MM-dd');
-        return isAfter(itemDate, start) && isBefore(itemDate, end);
+      const filtered = user?.orders.filter(item => {
+      	const itemDate =   	new Date(item.timeStamp)
+          return isAfter(itemDate, start) &&  (isBefore(itemDate, endDate) || isSameDay(itemDate, endDate));
       });
-
       setFilteredData(filtered);
       setCurrentPage(1);
     } else {
@@ -67,8 +65,6 @@ import UserOrderModal from './userOrderModal.jsx'
   );
 
   const pageCount = Math.ceil(filteredData?.length / itemsPerPage);
-
-
   const handleNextPage = () => {
     if (currentPage * itemsPerPage < filteredData.length) {
       setCurrentPage(currentPage + 1);
@@ -80,8 +76,6 @@ import UserOrderModal from './userOrderModal.jsx'
       setCurrentPage(currentPage - 1);
     }
   };
- 
-
  	return (
  		<div className=' grid gap-2'>
  			<article>
@@ -222,7 +216,7 @@ import UserOrderModal from './userOrderModal.jsx'
  										>
  											<p className='basis-[30%] text-left truncate max-w-[80%]'>{orderId}</p>
  											<p className='basis-[20%]'>{contactNo}</p>
- 											<p className='basis-[20%]'>{timeStamp}</p>
+ 											<p className='basis-[20%]'>{timeStamp.split(',')[0]}</p>
  											<p className='basis-[20%] font-semibold'>₦ {order.total}</p>
  											<p className={`basis-[10%] rounded-xl w-fit italic capitalize text-gray-900 ${ status==='pending' && 'bg-yellow-200 '}  ${ status==='completed' && 'bg-green-200 '}  ${ status==='cancelled' && 'bg-red-200 '}`}>{status}</p>
  										</div>
@@ -245,7 +239,7 @@ import UserOrderModal from './userOrderModal.jsx'
  							}
 
  							{
- 								paginatedData?.length > pageCount &&
+ 								pageCount > 1 &&
  							<div className="flex justify-end  p-2 ">
 			 					<Pagination count={pageCount} page={currentPage} 
 			 					sx={{

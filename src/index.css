@@ -135,7 +135,22 @@ li{
 		transform: translate(5px);
 	}
 }
-
+.roll{
+	animation: cart 6s linear  infinite;
+	transition: transform .2s ease;
+}
+@keyframes cart {
+	75%{
+		transform: translateX(230px);
+	}
+	90%{
+		transform: translate(240px,34px) rotate(360deg);
+		opacity: 0;
+	}
+	100%{
+		opacity: 0;
+	}
+}
 ::-webkit-scrollbar{
 	width: 3px;
 }

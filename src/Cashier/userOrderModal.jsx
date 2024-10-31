@@ -7,7 +7,6 @@ import React from 'react'
 const UserOrderModal = () => {
 	const dispatch=useDispatch()
 	const {userOrdersOpen,userOrders}=useSelector(state=>state.cashier)
-	console.log(userOrders)
 	return (
 		<Modal open={userOrdersOpen}
  			onClose={()=>dispatch(SETUSERORDERSMODAL(false))}

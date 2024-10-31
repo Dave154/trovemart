@@ -44,7 +44,7 @@ const Root = () => {
                             <p className="justify-self-end cursor-pointer">View all {round(products?.filter(product=>product.category.includes(item)).length)}+ items <KeyboardDoubleArrowRight/> </p>    
                         </div>
                     </div>
-                    <ul className="flex py-2 pl-1 gap-2 overflow-auto horizontal-scroll">
+                    <ul className="flex py-2 pl-1 gap-2 overflow-auto horizontal-scroll items-stretch">
                     { products?.filter((product,index)=> { 
                             if (product.category.includes(item)) {
                                 return product

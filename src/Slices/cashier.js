@@ -172,7 +172,6 @@
           state.userQuery=action.payload
          },
          USER:(state,action)=>{
-          console.log(action.payload)
           const sorted= action.payload ?{...action.payload,orders:action.payload.orders?.sort((a,b)=>new Date(b.timeStamp) - new Date(a.timeStamp))}:null
           state.user= sorted
          }, 

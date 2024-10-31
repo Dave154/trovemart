@@ -19,7 +19,6 @@
                const qrinfo = JSON.parse(data.text)
                navigate(qrinfo.orderId)
           const res = await getDoc(doc(db, "globalOrders", qrinfo.orderId))
-         console.log(res.data())
          return res.data()
          }
        }catch(err){
