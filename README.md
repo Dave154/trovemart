@@ -1,4 +1,5 @@
 
+![TroveMart Logo](src/assets/trove.svg)
 
 # TroveMart
 
@@ -11,7 +12,6 @@
 ![Firebase](https://img.shields.io/badge/Backend-Firebase-orange)
 ![Vercel](https://img.shields.io/badge/Hosting-Vercel-black)
 
-![TroveMart Logo](./assets/trove.svg)
 
 ### [🌐 Live Link to TroveMart](https://trovemart.vercel.app)
 
