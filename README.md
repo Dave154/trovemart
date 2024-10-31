@@ -126,6 +126,8 @@ In **TroveMart**, cashiers need to be registered and assigned a unique ID to man
 2. **Demo Cashier**:
    - For demonstration purposes, a test cashier account has been created.
    - **Test Cashier ID**: `qwer_123_456`
+   - [🌐 Visit Cashier's Page](https://trovemart.vercel.app/C-A-S-H-I-E-R)
+
      
 ## Future Improvements
 
