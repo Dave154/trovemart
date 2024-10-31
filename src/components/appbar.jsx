@@ -45,7 +45,7 @@ const Navigation = ({ showCat,mt}) => {
       const remove = setTimeout(()=>{
             dispatch(REMOVEALERT())
 
-        },3000) 
+        },1500) 
             return ()=> clearTimeout(remove)
     },[cartList])
 //

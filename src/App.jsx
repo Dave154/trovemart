@@ -54,7 +54,7 @@ const App = () => {
 
      useEffect(()=>{
         const unsub=onAuthStateChanged(auth,(user)=>{
-            dispatch(CURRENTUSER(user))
+            dispatch(CURRENTUSER(user? {displayName:user.displayName,uid:user.uid,email:user.email}: null   ))
         })
             return ()=> unsub()
     },[])

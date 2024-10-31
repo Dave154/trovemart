@@ -24,7 +24,7 @@ const productsSlice = createSlice({
         pageList:1,
         depth: null,
         categories: null,
-        loading: false,
+        loading: true,
         error: null,
         favorites:localfavorite,
     },

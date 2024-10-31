@@ -29,6 +29,7 @@
                  uid: user.uid,
                  displayName: user.displayName,
                  email: user.email,
+                 status:'active',
                  phone:user.phoneNumber,
                  timeStamp:serverTimestamp(),
                  orderNo,

@@ -49,8 +49,8 @@ const Root = () => {
                             if (product.category.includes(item)) {
                                 return product
                             }
-                     }).slice(0, 10).map((item)=>{
-                            return <Card item={item} root/>
+                     }).slice(0, 10).map((item,i)=>{
+                            return <Card item={item} root key={i}/>
                         })   
                         }
                     </ul>

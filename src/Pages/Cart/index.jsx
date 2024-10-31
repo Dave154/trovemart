@@ -140,8 +140,8 @@ const Index = () => {
 				</h3>
 					<ScrollBtn scrollRef={scrollRef}/>
 				<div className='flex py-4 gap-4  relative overflow-auto horizontal-scroll' ref={scrollRef} >
-					{ recentlyViewed.slice(0, 10).map((item)=>{
-                            return <Card root item={item}/>
+					{ recentlyViewed.slice(0, 10).map((item,i)=>{
+                            return <Card root item={item}  key={i}/>
                         })   
                         }
 				

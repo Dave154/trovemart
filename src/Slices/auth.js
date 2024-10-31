@@ -22,7 +22,7 @@ const authSlice = createSlice({
 
   	},
   	CURRENTUSER:(state,action)=>{
-  		   state.currentUser=action.payload      
+  		   state.currentUser= action.payload   
   	},
   	COMPLETE:(state,action)=>{
   		state.complete= true

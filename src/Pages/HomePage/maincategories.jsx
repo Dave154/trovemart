@@ -12,20 +12,20 @@ import Breadcrumbs from '../.././components/breadcrumbs.jsx'
  	const {category}=useParams()
  	const dispatch = useDispatch();
     const navigate=useNavigate()
-    const {loading,paginatedProducts,mainCategories } = useSelector((state) => state.products);
+    const {loading,paginatedProducts,mainCategories ,currentMain,error} = useSelector((state) => state.products);
     const { popup } = useSelector((state) => state.appbar);
     useEffect(() => {
-        if(mainCategories){
-            if(mainCategories.find(item=>item=== category)){
-            dispatch(SETPRODUCTSDISPLAYED(category))
-
-        }else{
-            navigate('/error')
-        }
-        }
-         dispatch(SETCURRENTCATEGORY('All'))
+        dispatch(SETPRODUCTSDISPLAYED(category))
+        dispatch(SETCURRENTCATEGORY('All'))
         dispatch(SETPAGINATION(1))
     }, [loading,category]);
+
+    useEffect(()=>{
+        const find =mainCategories?.find(item=> item ===category)
+         if(!loading && !error && !find){
+        navigate('/error')
+         }
+    },[category,mainCategories])
  	return (
         <div className = "" >   
         <Navigation showCat mt={28}/>

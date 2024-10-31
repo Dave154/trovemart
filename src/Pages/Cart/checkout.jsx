@@ -83,7 +83,6 @@
              })
              dispatch(PLACEORDER(qr))
          } catch (err) {
-            alert(err)
              dispatch(PLACEORDER())
 
          }
